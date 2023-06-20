@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="\Magenest\GiftRegistry\Controller\GiftRegistryProviderInterface" type="\Magenest\GiftRegistry\Controller\GiftRegistryProvider" />
+    <type name="Magento\Theme\Block\Html\Topmenu">
+        <plugin name="magenest-giftregistry-topmenu" type="Magenest\GiftRegistry\Plugin\Block\TopMenu" />
+    </type>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="registry_listing_data_source" xsi:type="string">Magenest\GiftRegistry\Model\ResourceModel\Registrant\Grid\Collection</item>
+                <item name="type_listing_data_source" xsi:type="string">Magenest\GiftRegistry\Model\ResourceModel\Type\Grid\Collection</item>
+                <item name="transaction_listing_data_source" xsi:type="string">Magenest\GiftRegistry\Model\ResourceModel\Tran\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Magenest\GiftRegistry\Model\ResourceModel\Registrant\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult" >
+        <arguments>
+            <argument name="mainTable" xsi:type="string">magenest_giftregistry_registrant</argument>
+            <argument name="resourceModel" xsi:type="string">Magenest\GiftRegistry\Model\ResourceModel\Registrant</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magenest\GiftRegistry\Model\ResourceModel\Type\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult" >
+        <arguments>
+            <argument name="mainTable" xsi:type="string">magenest_giftregistry_event_type</argument>
+            <argument name="resourceModel" xsi:type="string">Magenest\GiftRegistry\Model\ResourceModel\Type</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magenest\GiftRegistry\Model\ResourceModel\Tran\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult" >
+        <arguments>
+            <argument name="mainTable" xsi:type="string">magenest_giftregistry_order</argument>
+            <argument name="resourceModel" xsi:type="string">Magenest\GiftRegistry\Model\ResourceModel\Tran</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- save giftregistry guest message in checkout page -->
+    <type name="Magento\Checkout\Model\ShippingInformationManagement">
+        <plugin name="save-in-quote" type="Magenest\GiftRegistry\Plugin\Checkout\ShippingInformationManagement"/>
+    </type>
+
+    <!-- Add gift registry owner addresses to Multishipping Checkout page -->
+    <type name="Magento\Multishipping\Block\Checkout\Addresses">
+        <plugin name="magenest-giftregistry-multishipping_addresses" type="Magenest\GiftRegistry\Plugin\Block\MultishippingAddresses" />
+    </type>
+
+    <!-- Override Customer Address Check in Multishipping Checkout -->
+    <preference for="Magento\Multishipping\Model\Checkout\Type\Multishipping"
+                type="Magenest\GiftRegistry\Model\Multishipping"/>
+
+    <!--  API for request shipping  -->
+    <preference for="Magenest\GiftRegistry\Api\ShippingRegistryInterface"
+                type="Magenest\GiftRegistry\Model\Api\ShippingRegistry" />
+
+    <!-- Export Events Type -->
+    <type name ="Magenest\GiftRegistry\Controller\Adminhtml\Export\GridToCsv">
+        <arguments>
+            <argument name="converter" xsi:type="object">Magenest\GiftRegistry\Model\Export\ConvertToCsv</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="Magenest\GiftRegistry\Model\Export\ConvertToCsv" type="Magento\Ui\Model\Export\ConvertToCsv">
+        <arguments>
+            <argument name="metadataProvider" xsi:type="object">Magenest\GiftRegistry\Model\Export\MetadataProvider</argument>
+        </arguments>
+    </virtualType>
+
+    <type name ="Magenest\GiftRegistry\Controller\Adminhtml\Export\GridToXml">
+        <arguments>
+            <argument name="converter" xsi:type="object">Magenest\GiftRegistry\Model\Export\ConvertToXml</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="Magenest\GiftRegistry\Model\Export\ConvertToXml" type="Magento\Ui\Model\Export\ConvertToXml">
+        <arguments>
+            <argument name="metadataProvider" xsi:type="object">Magenest\GiftRegistry\Model\Export\MetadataProvider</argument>
+        </arguments>
+    </virtualType>
+
+</config>

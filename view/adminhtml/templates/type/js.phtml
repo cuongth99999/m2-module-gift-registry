@@ -1,0 +1,57 @@
+<?php
+/** @var \Magenest\GiftRegistry\Block\Adminhtml\Type\Edit\Js $block */
+$maxUploadSize = $block->getMaxUploadSize()*1048576;
+?>
+<script>
+    require([
+        "jquery",
+        "mage/backend/tabs",
+        "mage/mage",
+        "mage/translate"
+    ],function ($) {
+        "use strict";
+        $("#images_image").change(function () {
+            $("#images_image").parent().find("#error-type-file").empty();
+            var file = $("#images_image").val();
+            var ext = file.split(".");
+            ext = ext[ext.length-1].toLowerCase();
+            var arrayExtensions = ["jpg" , "jpeg", "png"];
+            if (arrayExtensions.lastIndexOf(ext) == -1) {
+                var message = $.mage.__("Only accept png,jpeg,jpg extension!");
+                $("#images_image").parent().find("#error-type-file").append(message);
+                $("#images_image").val("");
+            } else {
+                var input = document.getElementById('images_image').files[0];
+                if(input && input.size > <?= $maxUploadSize; ?>){
+                    var message = $.mage.__("Make sure your file isn't more than {size}M.").replace('{size}', <?= $block->getMaxUploadSize(); ?>);
+                    $("#images_image").parent().find("#error-type-file").append(message);
+                    $("#images_image").val("");
+                }else{
+                    $("#images_image").parent().find("#error-type-file").empty();
+                }
+
+            }
+        });
+        $("#images_thumnail").change(function () {
+            $("#images_thumnail").parent().find("#error-type-file").empty();
+            var file = $("#images_thumnail").val();
+            var ext = file.split(".");
+            ext = ext[ext.length-1].toLowerCase();
+            var arrayExtensions = ["jpg" , "jpeg", "png"];
+            if (arrayExtensions.lastIndexOf(ext) == -1) {
+                var message = $.mage.__("Only accept png,jpeg,jpg extension!");
+                $("#images_thumnail").parent().find("#error-type-file").append(message);
+                $("#images_thumnail").val("");
+            } else {
+                var input = document.getElementById('images_thumnail').files[0];
+                if(input && input.size > <?= $maxUploadSize; ?>){
+                    var message = $.mage.__("Make sure your file isn't more than {size}M.").replace('{size}', <?= $block->getMaxUploadSize(); ?>);
+                    $("#images_thumnail").parent().find("#error-type-file").append(message);
+                    $("#images_thumnail").val("");
+                }else{
+                    $("#images_thumnail").parent().find("#error-type-file").empty();
+                }
+            }
+        });
+    });
+</script>

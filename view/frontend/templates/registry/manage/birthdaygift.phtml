@@ -1,0 +1,32 @@
+<?php
+?>
+<fieldset class="fieldset">
+  <h2 class="legend"><?php echo __('Birthday Information') ?></h2>
+  <div class="field required">
+    <label for="location" class="required label"><?php echo __('Born Day') ?></label>
+    <div class="input-box">
+      <input id="date-birthday" name="date-birthday" data-validate="{required:true}" id="date-birthday"
+             data-role="date-picker" class="picker" type="text" value="<?php echo $options['date-birthday'] ?>"/>
+      <small style="color: #8e8e8e"><?= __('E.g. 01-01-2001') ?></small>
+    </div>
+  </div>
+  <div class="field required">
+    <label for="location" class="required label"><?php echo __('Birthday\'s name') ?></label>
+    <div class="input-box">
+      <input type="text" data-validate="{required:true}" id="name-birthday" name="name-birthday"
+             value="<?php echo $options['name-birthday'] ?>"/>
+    </div>
+  </div>
+</fieldset>
+<script>
+  require([
+    "jquery",
+    "mage/calendar"
+  ], function ($) {
+
+    $("#date-birthday").calendar({
+      maxDate: new Date(),
+      dateFormat: 'mm-dd-yy'
+    });
+  });
+</script>

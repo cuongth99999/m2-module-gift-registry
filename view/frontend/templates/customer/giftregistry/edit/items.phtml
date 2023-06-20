@@ -1,0 +1,220 @@
+<?php
+/** @var $block \Magenest\GiftRegistry\Block\Registry\ManageRegistry */
+$registry = $block->getRegistry();
+$items = $block->getItemList();
+?>
+<style>
+    .manage-options #list-items{
+        border-bottom: 4px solid #000;
+    }
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+    .list-item-content .data-grid tr td a:hover {
+        color: red;
+        text-decoration: none;
+    }
+
+    .rating-stars ul {
+        list-style-type:none;
+        padding:0;
+        text-align: center;
+        -moz-user-select:none;
+        -webkit-user-select:none;
+    }
+    .rating-stars ul > li.star {
+        display:inline-block;
+
+    }
+
+    .rating-stars ul > li.star > i.fa {
+        font-size:2em;
+        margin-left: -6px;
+        color:#ccc;
+    }
+
+    .rating-stars ul > li.star.hover > i.fa {
+        color:#FFCC36;
+    }
+
+    .rating-stars ul > li.star.selected > i.fa {
+        color:#FF912C;
+    }
+</style>
+<div class="list-item-container" id="list-container">
+    <div class="giftregistry-quickOrder" data-role="content"
+         data-bind="scope: 'giftregistry-quickOrder'">
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <script type="text/x-magento-init">
+                    {
+                        "*": {
+                            "Magento_Ui/js/core/app": {
+                                "components": {
+                                    "giftregistry-quickOrder": {
+                                        "component": "Magenest_GiftRegistry/js/giftregistry-quickorder",
+                                        "template" : "Magenest_GiftRegistry/quickorder",
+                                        "config": {
+                                            "url": "<?= $block->getUrl('gift_registry/index/quickOrder'); ?>",
+                                            "addToCart": "<?= $block->getUrl('gift_registry/index/add'); ?>",
+                                            "giftId": "<?= $registry->getData('gift_id'); ?>"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+        </script>
+    </div><br>
+
+    <div class="list-item-content">
+        <form id="list_item_form" method="POST" data-mage-init='{"validation": {}}' action="<?= $block->getUpdateActionUrl() ?>">
+            <input name="event_id" value="<?= $registry->getData('gift_id') ?>" hidden/>
+            <input name="giftregistry_tab" value="items" hidden/>
+            <table class="data-grid" id="list-item" align-content="center">
+                <tr>
+                    <th>
+                        <input id="select-delete" type="checkbox">
+                    </th>
+                    <th class="data-grid-th"><span><?= __('Image') ?></span></th>
+                    <th class="data-grid-th"><span><?= __('Product Name') ?></span></th>
+                    <th class="data-grid-th"><span><?= __('Price') ?></span></th>
+                    <th class="data-grid-th" style="min-width: 120px"><span><?= __('Priority') ?></span></th>
+                    <th class="data-grid-th"><span><?= __('Desired Quantity') ?></span></th>
+                    <th class="data-grid-th"><span><?= __('Received Quantity') ?></span></th>
+                </tr>
+                <?php if (count($items) == 0): ?>
+                    <tr class="data-grid-tr-no-data">
+                        <td class="empty-text" colspan="8"><?= __('We couldn\'t find any records.') ?></td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($items as $item): ?>
+                        <?php
+                        try {
+                            $product = $item->getProduct();
+                        } catch (Exception $e) {
+                            continue;
+                        }
+                        if (!$block->getPrice($item, $product)) {
+                            continue;
+                        }
+                        $received_qty = $item->getData('received_qty');
+                        if (!$received_qty) {
+                            $received_qty = 0;
+                        } ?>
+                        <tr>
+                            <td data-th="<?= $block->escapeHtml(__('Checkbox')) ?>" class="col-title">
+                                <input class="checkdelete"
+                                       type="checkbox"
+                                       value="<?= $item->getId() ?>"
+                                       idRegistry="<?= $block->getRegistryId() ?>">
+                            </td>
+                            <td data-th="<?= $block->escapeHtml(__('Image')) ?>" class="col-title col-image" style="vertical-align: middle">
+                                <img style="margin: auto;" src="<?= $block->getProductImage($product); ?>">
+                                <?= $item->getData('event_id') ?>
+                            </td>
+
+                            <td data-th="<?= $block->escapeHtml(__('Product Name')) ?>" class="col-title" style="vertical-align: middle">
+                                <a href="<?= $product->getUrlModel()->getUrl($product) ?>" target="_blank" class="product-link-name">  <?= $product->getData('name') ?></a>
+                                <div class="field">
+                                    <dl style="margin: 10px 0">
+                                        <?php if ($product->getTypeId() == 'configurable'): ?>
+                                            <?php foreach ($block->getItemOptions($item) as $op): ?>
+                                                <?php if (is_array($op) && !empty($op)): ?>
+
+                                                    <dd style="margin-bottom: 0"><?= '<b>' . $op['label'] . "</b>: " . $op['value'] ?></dd>
+
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                        <?php if ($product->getOptions()):$customOption = $block->getCustomizableOption($item) ?>
+                                            <?php foreach ($customOption as $custom) : ?>
+                                                <?php if (isset($custom['label']) && $custom['value']) {?>
+                                                    <dl>
+                                                        <dd><?= '<b>' . $custom['label'] . "</b>: " . $custom['value'] ?></dd>
+                                                    </dl>
+                                                <?php } ?>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </dl>
+                                </div>
+                            </td>
+                            <td data-th="<?= $block->escapeHtml(__('Unit Price')) ?>" class="col-title" style="vertical-align: middle;">
+                                <?php $price = $block->getPrice($item, $product);?>
+                                <?= $this->helper('Magento\Framework\Pricing\Helper\Data')->currency($price, true, false);
+                                ?>
+                            </td>
+                            <td data-th="<?= $block->escapeHtml(__('Priority')) ?>" class="col-title col-details" style="vertical-align: middle;">
+                                <div class='rating-stars text-center'>
+                                    <?php
+                                    $valuePrority = $item->getData('priority');
+                                    ?>
+                                    <input value="<?= $item->getData('priority') ?>" id="valuePriority" hidden>
+                                    <ul id='stars' data-role='adjust-select' data-myvalue='<?= $item->getData('priority') ?>'>
+                                        <?php
+                                        for ($i=1; $i <=5; $i++): ?>
+                                            <li class="star <?= $i <= $valuePrority ? 'selected' : '' ?>" data-value="<?= $block->escapeHtml($i); ?>" data-action='<?= $block->escapeHtml($item->getId()) ?>'>
+                                                <i class='fa'>★</i>
+                                            </li>
+                                        <?php
+                                        endfor;
+                                        ?>
+                                    </ul>
+                                </div>
+                            </td>
+                            <td data-th="<?= $block->escapeHtml(__('Quantity')) ?>" class="col-title col-qty" style="vertical-align: middle;">
+                                <input class="qty" name="item[<?= $item->getId() ?>][qty]"  min="1" data-validate="{required:true,'validate-greater-than-zero':true, 'integer': true}"
+                                       value="<?php
+                                            $desired = ($item->getData('qty') - $received_qty);
+                                            echo $desired >= 0 ? $desired : 0;
+                                       ?>" type="text">
+                            </td>
+                            <td data-th="<?= $block->escapeHtml(__('Received Quantity')) ?>" class="col-title" style="vertical-align: middle;">
+                                <?= $received_qty ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </table>
+        </form>
+    </div>
+    <div style="margin: 30px 0; text-align: center; float: left;">
+        <button id="btnUpdate" class="action update"><?= __('Update') ?></button>
+        <button id="btnDellAll"
+                class="action" type="button"
+                post-url="<?= $block->getUrl('gift_registry/customer/item/') ?>"
+                idGift="<?= $block->getRegistryId() ?>"
+        >
+            <?= __('Delete') ?>
+        </button>
+        <button id="btnAddItems" class="action" type="button" post-url="<?= $block->getUrl('') ?>">
+            <?= __('Add Items') ?>
+        </button>
+    </div>
+</div>
+<div id="confirmDelete" class="confirmDelete">
+    <div class="confirmDelete-content">
+        <div style="text-align: center">
+            <h3><?= __('Your item will be deleted! Are you sure?') ?></h3>
+            <div class="gr-action-delete">
+                <input type="button" class="primary action" id="okDelete" value="<?= __('Yes') ?>">
+                <input type="button" class="primary action" id="noDelete" value="<?= __('No') ?>">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="noItemDelete" class="noItemDelete">
+    <div class="confirmDelete-content">
+        <div style="text-align: center">
+            <h3><?= __(' Attention! You haven\'t selected any items!') ?></h3>
+            <input type="button" class="primary action" id="ok" value="<?= __('Ok') ?>">
+        </div>
+    </div>
+</div>

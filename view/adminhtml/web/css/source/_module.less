@@ -1,0 +1,26 @@
+@giftregistry-icons-admin__font-name-path: 'Magenest_GiftRegistry::fonts/Glyphter';
+@giftregistry-icons-admin__font-name : 'Glyphter';
+
+.lib-font-face(
+  @family-name: @giftregistry-icons-admin__font-name,
+  @font-path: @giftregistry-icons-admin__font-name-path,
+  @font-weight: normal,
+  @font-style: normal
+);
+
+.admin__menu .item-giftregistry.parent.level-0 > a:before,
+.admin__menu .item-giftregistry.level-0 > a:before {
+  font-family: @giftregistry-icons-admin__font-name;
+  font-size: 3.5rem;
+  line-height: 2px;
+  content: "\0049";
+  padding: 16px 0;
+  margin: 0 auto 0.5rem;
+}
+#post_tabs_giftregistry_registry_tabs_information_content,
+#post_tabs_giftregistry_registry_tabs_content,
+#post_tabs_giftregistry_registry_tabs_items_content {
+  line-height: 3.2rem;
+}
+
+@import "../font-awesome.css";

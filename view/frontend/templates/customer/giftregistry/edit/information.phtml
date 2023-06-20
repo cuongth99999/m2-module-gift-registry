@@ -1,0 +1,350 @@
+<?php
+    /** @var $block \Magenest\GiftRegistry\Block\Registry\ManageRegistry */
+
+    $eventType = $block->getEventType();
+    $eventTypeModel = $block->getEventTypeModel();
+    $registry = $block->getRegistry();
+    $google_api = $block->getGoogleApi();
+    $year = substr($registry->getData('date'), 0, 4);
+    $month = substr($registry->getData('date'), 5, 2)-1;
+    $date = substr($registry->getData('date'), 8, 2)+1;
+?>
+<input name="event_id" value="<?= $registry->getData('gift_id') ?>" hidden/>
+<?php
+    $link = $block->getViewFileUrl('/');
+    $items = $block->getItemList();
+    $gift_options = $block->jsonDecode($registry->getData('gift_options'));
+    $options = $block->convertGiftOption($eventType, $gift_options);
+    $dateTimeObj = new \DateTime($registry->getData('date'));
+    $euDateFormat = $dateTimeObj->format('d-m-Y');
+    $registrants = $block->getRegistrants();
+    $addressCollection = $block->getShippingAddress();
+    $addressArr = $block->getCustomerAddress();
+
+    if ($block->haveOrder() != 0) {
+        $orderCollection = $block->getOrderCollection();
+    }
+    $imageAvatarUrl = $block->getImageBannerDefault($registry->getData('type'));
+    if ($registry->getData('image') != "") {
+        $image = $block->getImageGRUrl($registry->getData('image'));
+    } elseif ($imageAvatarUrl != '') {
+        $image = $imageAvatarUrl;
+        $block->updateData($registry, $image);
+    } else {
+        $image = $link . '/Magenest_GiftRegistry/images/guest-view/banner-default.jpg';
+    }
+    if ($registry->getData('image_location') != "") {
+        $imageLocation = $block->getImageGRUrl($registry->getData('image_location'));
+    } else {
+        $imageLocation = $link . '/Magenest_GiftRegistry/images/guest-view/time-location-default.jpg';
+    }
+    if ($registry->getData('image_joinus')) {
+        $imageJoinUs = $block->getImageGRUrl($registry->getData('image_joinus'));
+    } else {
+        $imageJoinUs = $link . '/Magenest_GiftRegistry/images/guest-view/joinus-default.jpg';
+    }
+
+$additions_field = $eventTypeModel->getData('additions_field');
+$allAdditionalFields = [
+    'general_information' => [],
+    'registrant_information' => [],
+    'privacy' => [],
+    'shipping_address_information' => [],
+    'additional_section' => []
+];
+if ($block->isShowAboutEvent()) {
+    if ($additions_field != "") {
+        $aboutEvents = $block->jsonDecode($additions_field);
+        foreach ($aboutEvents as $field) {
+            if (!empty($field['group'])) {
+                $allAdditionalFields[$field['group']][] = $field;
+            }
+        }
+    }
+
+}
+
+?>
+<style>
+    #edit-information{
+        border-bottom: 4px solid #000;
+    }
+</style>
+<div class="edit-infor-container" id="edit-container">
+    <div type="hidden" id="form-key" value="<?= $block->getFormKey();?>"></div>
+    <form method="POST" enctype="multipart/form-data" data-mage-init='{"validation": {}}' autocomplete="off" id="registry-infor-form"
+          action="<?= $block->getSaveAddressUrl() ?>">
+        <input type="text" name="type" value="<?= $block->getEventType() ?>" style="display: none">
+        <div class="col-edit-left col-sm-12">
+            <?php if ($eventTypeModel->getData('additions_field') != ""): ?>
+                <fieldset class="fieldset">
+                    <h2 class="legend"><?= $block->escapeHtml($eventTypeModel->getData('event_title')) . __(' Information')?></h2>
+                    <?php
+                    echo $block->getChildBlock('giftregistry.additional.field')
+                            ->setData('fields', $allAdditionalFields['additional_section'])
+                            ->setData('options', $options)->toHtml();
+                    ?>
+                </fieldset>
+            <?php endif; ?>
+            <fieldset class="fieldset">
+                <h2 class="legend"><?= __('Registrant Information') ?></h2>
+                <?php if ($registrants && $registrants->getSize() > 0): ?>
+                    <?php foreach ($registrants as $registrant) : ?>
+                        <div class="field required">
+                            <label for="firstName" class="required label"><?= __("First Name") ?></label>
+                            <div class="input-box">
+                                <input type="text" data-validate="{required:true, 'validate-no-html-tags':true}"
+                                       value="<?= $block->escapeHtml($registrant->getData('firstname')) ?>"
+                                       name="registrant[<?= $registrant->getId() ?>][firstname]"
+                                       title="<?= __("First Name") ?>" id="firstName"
+                                       class="input-text required-entry">
+                            </div>
+                        </div>
+
+                        <div class="field required">
+                            <label for="lastname" class="required label"><?= __("Last name") ?> </label>
+                            <div class="input-box">
+                                <input type="text" data-validate="{required:true, 'validate-no-html-tags':true}"
+                                       value="<?= $block->escapeHtml($registrant->getData('lastname')) ?>"
+                                       name="registrant[<?= $registrant->getId() ?>][lastname]"
+                                       title="<?= __("Last name") ?>" id="lastName"
+                                       class="input-text required-entry">
+                            </div>
+                        </div>
+
+                        <div class="field required">
+                            <label for="email" class="required label"><?= __("Email") ?> </label>
+                            <div class="input-box">
+                                <input type="email" data-validate="{required:true}"
+                                       value="<?= $block->escapeHtml($registrant->getData('email')) ?>"
+                                       name="registrant[<?= $registrant->getId() ?>][email]" title="Email"
+                                       id="email" class="input-text required-entry">
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="field required">
+                        <label for="firstName" class="required label"><?= __("First Name") ?></label>
+                        <div class="input-box">
+                            <input type="text" data-validate="{required:true}"
+                                   name="registrant[0][firstname]" title="<?= __("First Name") ?>"
+                                   id="firstName" class="input-text required-entry">
+                        </div>
+                    </div>
+
+                    <div class="field required">
+                        <label for="lastname" class="required label"><?= __("Last name") ?> </label>
+                        <div class="input-box">
+                            <input type="text" data-validate="{required:true}"
+                                   name="registrant[0][lastname]" title="<?= __("Last name") ?>"
+                                   id="lastName" class="input-text required-entry">
+                        </div>
+                    </div>
+
+                    <div class="field required">
+                        <label for="email" class="required label"><?= __("Email") ?> </label>
+                        <div class="input-box">
+                            <input type="email" data-validate="{required:true, 'validate-email':true}"
+                                   name="registrant[0][email]" title="Email" id="email" class="input-text">
+                        </div>
+                    </div>
+                <?php endif; ?>
+                <?php
+                echo $block->getChildBlock('giftregistry.additional.field')
+                    ->setData('fields', $allAdditionalFields['registrant_information'])
+                    ->setData('options', $options)->toHtml();
+                ?>
+            </fieldset>
+            <!-- PRIVACY -->
+            <fieldset class="fieldset">
+                <h2 class="legend required"><?= __('Privacy') ?></h2>
+                <div class="field required">
+                    <label for="password" class="label"><?= __('Privacy mode') ?></label>
+                    <div class="control">
+                        <select id="privacy-select-input" name="privacy" data-validate="{required:true}" data-role="defined-selected"
+                                data-myvalue="<?= $registry->getData('privacy') ?>">
+                            <option value="private" <?= $registry->getData('privacy') == "private" ? "selected" : "" ?> > <?= __("Private") ?></option>
+                            <option value="public" <?= $registry->getData('privacy') == "public" ? "selected" : "" ?> > <?= __("Public") ?></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field required password-field" hidden>
+                    <label for="password" class="required label"><?= __("Password") ?></label>
+                    <input type="password" data-validate="{required:true, 'validate-password':true}" id="password"
+                           class="input-text" title="<?= __("Password") ?>" value="" name="password" readonly onfocus="this.removeAttribute('readonly');" placeholder="Enter new password">
+                </div>
+                <div class="field required password-field" hidden>
+                    <label for="re_password" class="required label"><?= __("Confirm Password") ?></label>
+                    <input type="password" data-validate="{required:true, equalTo:'#password'}" id="re_password"
+                           class="input-text" title="<?= __("Confirm Password") ?>" value="" name="re_password" readonly onfocus="this.removeAttribute('readonly');" placeholder="Confirm new password">
+                    <label style="color:red;" hidden id="check_password_label" class="label">
+                        <?= __('Password and repassword must match!') ?></label>
+                </div>
+                <div id="change-password-btn" class="field" <?php if ($registry->getData('privacy') == 'private') {
+                    echo '';
+                } else {
+                    echo 'hidden';
+                } ?>>
+                    <div id="change_pass" class="change_pass action primary">
+                        <b><?= __('Change Password') ?></b></div>
+                </div>
+
+                <div class="field choice field-showinsearch">
+                    <?php $checked = '';
+                    $show_in_search = $registry->getData('show_in_search');
+                    if ($show_in_search == 'on') {
+                        $checked = 'checked';
+                    } ?>
+                    <input type="checkbox" <?= $checked ?> id="show_in_search_result" name="show_in_search"
+                           class="checkbox" title="<?= __("Show in search result") ?>">
+                    <input type="hidden" id="gift_id" name="gift_id" value="<?= $registry['gift_id'] ?>">
+
+                    <label for="show_in_search"><?= __("Show in search result") ?></label>
+                </div>
+                <?php
+                echo $block->getChildBlock('giftregistry.additional.field')
+                    ->setData('fields', $allAdditionalFields['privacy'])
+                    ->setData('options', $options)->toHtml();
+                ?>
+            </fieldset>
+
+            <!-- Change Image Default  -->
+            <fieldset class="fieldset">
+                <h2 class="legend"><?= __('Change Image Default') ?></h2>
+                <span id="error-type-file" style="display:none;"></span>
+                <div class="field">
+                    <label class="label"><?= __('Banner Image') ?></label>
+                    <div class="input-box change-background">
+                        <img style="float: left;margin-right: 10px;" src="<?= $image ?>" width="22" height="22"/>
+                        <input id="giftregistry-banner" name="giftregistry-banner" type="file" value="<?= $registry->getData('image') ?>"/>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label"><?= __('Time and Location Image') ?></label>
+                    <div class="input-box change-background">
+                        <img style="float: left;margin-right: 10px;" src="<?= $imageLocation ?>" width="22" height="22"/>
+                        <input id="giftregistry-location" name="giftregistry-location" type="file" value="<?= $registry->getData('image_location') ?>"/>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label"><?= __('Invitation Image') ?></label>
+                    <div class="input-box change-background">
+                        <img style="float: left;margin-right: 10px;" src="<?= $imageJoinUs ?>" width="22" height="22">
+                        <input id="giftregistry-joinus" name="giftregistry-joinus" type="file" value="<?= $registry->getData('image_joinus') ?>"/>
+                    </div>
+                </div>
+
+            </fieldset>
+        </div>
+        <div class="col-edit-right col-sm-12">
+            <fieldset class="fieldset">
+                <h2 class="legend"><?= __('General Information') ?></h2>
+                <!-- STATUS -->
+                <div class="field required">
+                    <label for="status" class="required label"><?= __("Status") ?></label>
+                    <div class="panel-body">
+                        <select id="status-select-input" name="is_expired" data-validate="{required:true}"
+                                data-role="defined-selected" data-myvalue="<?=$registry->getData('is_expired')?>">
+                            <option value="1" <?= $registry->getData('is_expired') ? "selected" : "" ?> > <?= __("Expired") ?></option>
+                            <option value="0" <?= !$registry->getData('is_expired') ? "selected" : "" ?> > <?= __("Active") ?></option>
+                        </select>
+                    </div>
+                    <small><?= __("You can no longer edit this registry when expired.") ?></small>
+                </div>
+                <div class="field">
+                    <label for="title" class="required label"><?= __("Title") ?></label>
+                    <div class="input-box">
+                        <input data-validate="{required:true}" type="text" id="title" name="title"
+                               value="<?= $block->escapeHtml($registry->getData('title')); ?>"/>
+                    </div>
+                </div>
+                <div class="field required">
+                    <label class="required label"><?= __('Date ') ?></label>
+                    <div class="panel-bodypanel-body">
+                        <input data-validate="{required:true}" name="date" id="datepicker" class="picker date-calendar"
+                               type="text" readonly value="<?= $euDateFormat ?>"/>
+                    </div>
+                </div>
+                <!--Description-->
+                <div class="field">
+                    <label for="description" class="label"><?= __("Description") ?></label>
+                    <div class="input-box">
+                        <textarea name="description" id="description"><?= $block->escapeHtml($registry->getData('description')) ?></textarea>
+                    </div>
+                </div>
+                <!-- LOCATION -->
+                <div class="field">
+                    <label for="location" class="label"><?= __("Location") ?></label>
+                    <div class="input-box" style="margin-bottom: 15px">
+                        <input type="text" id="pac-input" placeholder="<?= __('Enter the location') ?>" name="location"
+                               value="<?= $block->escapeHtml($registry->getData('location')) ?>"/>
+                    </div>
+                    <div id="map-section">
+                        <div id="map"></div>
+                        <div id="infowindow-content">
+                            <img src="" width="16" height="16" id="place-icon">
+                            <span id="place-name" class="title"></span><br>
+                            <span id="place-address"></span>
+                        </div>
+                    </div>
+                </div>
+                <?php
+                echo $block->getChildBlock('giftregistry.additional.field')
+                    ->setData('fields', $allAdditionalFields['general_information'])
+                    ->setData('options', $options)->toHtml();
+                ?>
+            </fieldset>
+            <fieldset class="fieldset">
+                <h2 class="legend"><?= __("Shipping Address Information") ?></h2>
+                <div class="field required">
+                    <label for="shipping_address"
+                           class="required label"><?= __("Shipping Address") ?> </label>
+                    <div class="control">
+                        <select id="shipping_address" data-validate="{'required-entry':true}"
+                                name="shipping_address" data-role="defined-selected"
+                                data-action="add-new-shipping-address" data-roles="shipping-add"
+                                data-role="defined-selected"
+                                data-myvalue="<?= $registry->getData('shipping_address') ?>">
+                            <option value=""><?= __('Select an address') ?></option>
+                            <?php if ($addressArr) : ?>
+                                <?php foreach ($addressArr as $address) : ?>
+                                    <option <?php if ($address['id'] == $registry->getData('shipping_address')) {
+                    echo "selected";
+                } ?>
+                                        value="<?= $address['id'] ?>"><?= $block->escapeHtml($address['name']) ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                            <option data-action="add-new-shipping-address"
+                                    value="new"><?= __("Add new address") ?></option>
+                        </select>
+                    </div>
+                </div>
+                <?php
+                echo $block->getChildBlock('giftregistry.additional.field')
+                    ->setData('fields', $allAdditionalFields['shipping_address_information'])
+                    ->setData('options', $options)->toHtml();
+                ?>
+            </fieldset>
+        </div>
+        <?php if (!$block->getIsExpiredGift()): ?>
+            <div class="fieldset btn-action" style="text-align: center; background-color: #fff; padding: 40px;">
+                <input id="save_btn" class="action btn_save primary btn-action-registry" type="button" style="display: inline-block"
+                       value="<?= __("Save"); ?>">
+                <input type="button" style="display: inline-block;" value="<?= __("Delete"); ?>"
+                       id="delete-registry" class="action btn_delete primary btn-action-registry"
+                       data-giftid="<?= $registry->getData('gift_id') ?>"
+                       data-url="<?= $block->deleteEvent() ?>">
+                <button type="button" id="preview-registry" class="action"><?= __("Preview"); ?></button>
+            </div>
+        <?php endif ?>
+    </form>
+</div>
+<script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace('description',
+        {
+            language: 'en',
+            uiColor: '#dddddd',
+            forceSimpleAmpersand: 'true'
+        })
+</script>

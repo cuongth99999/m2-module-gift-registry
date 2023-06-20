@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Csp:etc/csp_whitelist.xsd">
+    <policies>
+        <policy id="font-src">
+            <values>
+                <value id="gstatic" type="host">fonts.gstatic.com</value>
+            </values>
+        </policy>
+        <policy id="style-src">
+            <values>
+                <value id="google_stype" type="host">fonts.googleapis.com/</value>
+                <value id="stype-ckeditor" type="host">cdn.ckeditor.com/</value>
+            </values>
+        </policy>
+        <policy id="default-src">
+            <values>
+                <value id="google_fallback" type="host">*.googleapis.com</value>
+            </values>
+        </policy>
+        <policy id="form-action">
+            <values>
+                <value id="google_form" type="host">*.google.com</value>
+            </values>
+        </policy>
+        <policy id="script-src">
+            <values>
+                <value id="google_js" type="host">maps.googleapis.com</value>
+                <value id="script-ckeditor" type="host">cdn.ckeditor.com/</value>
+            </values>
+        </policy>
+        <policy id="img-src">
+            <values>
+                <value id="google_img" type="host">maps.googleapis.com</value>
+                <value id="google_map" type="host">maps.gstatic.com</value>
+                <value id="googleadservices" type="host">*.googleadservices.com</value>
+                <value id="google-analytics" type="host">*.google-analytics.com</value>
+                <value id="google-ckeditor" type="host">cdn.ckeditor.com</value>
+                <value id="data" type="host">'self' data:</value>
+            </values>
+        </policy>
+        <policy id="connect-src">
+            <values>
+                <value id="google_map_connect" type="host">maps.googleapis.com/</value>
+            </values>
+        </policy>
+        <policy id="frame-src">
+            <values>
+                <value id="google_dotcom_iframes" type="host">*.google.com</value>
+            </values>
+        </policy>
+    </policies>
+</csp_whitelist>

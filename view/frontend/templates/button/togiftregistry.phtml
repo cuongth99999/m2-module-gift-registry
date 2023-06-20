@@ -1,0 +1,43 @@
+<?php
+
+/** @var \Magento\Wishlist\Block\Customer\Wishlist\Button $block */
+
+$actionAddUrl = $block->getUrl('gift_registry/wishlist/getallregistry');
+?>
+
+<?php if ($block->getWishlist()->getItemsCount() && $block->getWishlist()->isSalable()) : ?>
+    <button type="button" data-role="all-togiftregistry" id="add-all-to-giftregistry" title="<?= $block->escapeHtmlAttr(__('Add All to Gift Registry')) ?>" class="action togiftregistry">
+        <span><?= $block->escapeHtml(__('Add All to Gift Registry')) ?></span>
+    </button>
+<?php endif;?>
+
+<div id="add-giftregistry-table" class="giftregistry-table" data-role="giftregistry-table" style="display: none">
+    <div class="giftregistry-modal">
+        <div id="giftregistry-message-error" class="message-error message" ></div>
+        <div class="giftregistry-modal-content">
+            <div class="giftregistry-close"><i class="fa fa-times" aria-hidden="true"></i>
+            </div>
+            <div class="giftregistry-title">
+                <i class="fa fa-gift" aria-hidden="true"></i>
+                <?= __('Please choose a Gift Registry Event for the selected product: ') ?>
+            </div>
+            <div class="giftregistry-list">
+                <div id="list-gift" class="list-gift">
+                </div>
+            </div>
+            <div class="giftregistry-action">
+                <button id="add-gift-button" type="button" class="add-gift-button gift-button"><?= __('Add')?></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magenest_GiftRegistry/js/view/wishlist/add-all-to-giftregistry": {
+                "actionAddUrl" : "<?= $actionAddUrl; ?>"
+            }
+        }
+    }
+</script>

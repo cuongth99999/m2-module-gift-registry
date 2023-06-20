@@ -1,0 +1,66 @@
+<table class="data-grid" id="additions_field" xmlns="http://www.w3.org/1999/html">
+    <thead>
+        <tr class="data-grid-filters">
+            <th><b>Type</b></th>
+            <th><b>Label</b></th>
+            <th><b>Attribute Group</b></th>
+            <th><b>Is Required</b></th>
+            <th><b>Action</b></th>
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: { data: $root.aboutEvent, as: 'option' }">
+        <tr>
+            <td>
+                <select data-bind="attr: { name: 'additions_field[' +option.id() + '][type]'},value:option.type">
+<!--                    <option>-&#45;&#45; Please select -&#45;&#45;</option>-->
+                    <optgroup label="Text">
+                        <option value="field">Field</option>
+                        <option value="area">Area</option>
+                    </optgroup>
+                    <optgroup label="Date">
+                        <option value="date">Date</option>
+                    </optgroup>
+                    <optgroup label="Country">
+                        <option value="country">Country</option>
+                    </optgroup>
+                </select>
+                <input type="hidden"
+                       data-bind="attr: { name: 'additions_field[' +option.id() + '][id]'},value:option.id"/>
+            </td>
+            <td>
+                <input type="text" data-require="required-entry" data-bind="attr: { name: 'additions_field[' +option.id() + '][label]'},value:option.label"/><br>
+<!--                <span>If Type = "Option" use ":" to get the title, "," distinguish the options</span><br>-->
+            </td>
+            <td>
+                <select data-bind="attr: { name: 'additions_field[' +option.id() + '][group]'},value:option.group">
+                    <option value="additional_section">Additional Section</option>
+                    <option value="general_information">General Information</option>
+                    <option value="registrant_information">Registrant Information</option>
+                    <option value="privacy">Privacy</option>
+                    <option value="shipping_address_information">Shipping Address Information</option>
+                </select>
+            </td>
+            <td>
+                <select data-bind="attr: { name: 'additions_field[' +option.id() + '][require]'},value:option.require">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </td>
+            <td>
+                <button type="button"
+                        class="action-default"
+                        data-action="delete-row"
+                        data-bind="event:{click:$root.deleteElement}">
+                    <span>Delete</span>
+                </button>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <td colspan="5">
+            <button type="button" class="add-btn action-default"  data-role="add-new-row" data-bind="click: $root.addNewElement">
+                Add Element
+            </button>
+        </td>
+    </tfoot>
+</table>

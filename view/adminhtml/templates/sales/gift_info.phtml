@@ -1,0 +1,21 @@
+<?php
+/**
+ * @var $block \Magenest\GiftRegistry\Block\Adminhtml\Sales\GiftInfo
+ */
+
+$order_id = $block->getOrder()->getData('entity_id');
+$message = $block->getMessage($order_id);
+?>
+<section class="admin__page-section order-addresses">
+    <div class="admin__page-section-title">
+        <span class="title">Gift Registry Information</span>
+    </div>
+    <div class="admin__page-section-content">
+        <div class="admin__page-section-item order-billing-address">
+            <div class="admin__page-section-item-title">
+                <span class="">Sender Name: Name</span><br>
+                <span class="">Message: <?= $message; ?></span>
+            </div>
+        </div>
+    </div>
+</section>

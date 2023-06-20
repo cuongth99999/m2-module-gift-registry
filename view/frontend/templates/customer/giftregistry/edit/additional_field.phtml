@@ -1,0 +1,104 @@
+<?php
+$fields = $block->getData('fields');
+$options = $block->getData('options');
+if (!empty($fields)) {
+    foreach ($fields as $field) {
+        $type = $field['type'];
+        $label = $field['label'];
+        $group = $field['group'];
+        $require = $field['require'];
+        if ($type == 'option') {
+            $arr = explode(':', $label);
+            $options = explode(',', $arr[1]);
+        }
+        $id = $field['id']; ?>
+        <div class="field">
+            <label for="location"
+                   class="label <?= $require ? 'required' : '' ?>"><?= isset($arr[0]) ? $block->escapeHtml($arr[0]) : $block->escapeHtml($field['label']) ?></label>
+            <div class="input-box">
+                <?php
+                $option = null;
+        if (!empty($options)) {
+            if (array_key_exists($type, $options)) {
+                $option = ((array_key_exists($id, $options[$type])) && !empty($options[$type])) ? $options[$type] : null;
+            }
+        }
+        if ($type != 'area') {
+            if ($type == 'date') {
+                ?>
+                        <input data-validate="{required: <?= $require ? 'true' : 'false' ?>}"
+                               name="field[date][<?= $id; ?>]"
+                               data-role="date-picker"
+                               class="background-none picker"
+                               type="text"
+                               readonly
+                               value="<?php if (isset($option)) {
+                    echo array_key_exists($id, $option) ? $option[$id] : date('d-m-Y');
+                } else {
+                    echo date('d-m-Y');
+                } ?>"/>
+                        <?php
+            } elseif ($type == 'country') {
+                if ($option) { ?>
+                            <select data-validate="{required: <?= $require ? 'true' : 'false' ?>}"
+                                    name="field[country][<?= $id; ?>]">
+                                <option class="placeholder" value="" disabled selected>Country</option>
+                                <?php
+                                $countries = $block->getAvailableCountries();
+                                foreach ($countries as $country) {
+                                    if ($country->getCountryId() == 'AN') {
+                                        continue;
+                                    } ?>
+                                    <option
+                                        <?php if ($option[$id] == $country->getCountryId()) {
+                                        echo "selected";
+                                    } ?>
+                                        value="<?= $country->getCountryId(); ?>">
+                                        <?= $country->getName(); ?>
+                                    </option>
+                                    <?php
+                                } ?>
+                            </select>
+                        <?php } else { ?>
+                            <select data-validate="{required: <?= $require ? 'true' : 'false' ?>}"
+                                    name="field[country][<?= $id ?>]">
+                                <option class="placeholder" value="" disabled selected>Country</option>
+                                <?php
+                                $countries = $block->getAvailableCountries();
+                                foreach ($countries as $country) {
+                                    if ($country->getCountryId() == 'AN') {
+                                        continue;
+                                    } ?>
+                                    <option
+                                        value="<?= $country->getCountryId(); ?>">
+                                        <?= $country->getName(); ?>
+                                    </option>
+                                    <?php
+                                } ?>
+                            </select>
+                        <?php }
+            } else {
+                ?>
+                        <input type="<?= $type; ?>"
+                               data-validate="{required: <?= $require ? 'true' : 'false' ?>}"
+                               placeholder="<?= $block->escapeHtml($label) ?>"
+                               name="field[<?= $type; ?>][<?= $id; ?>]"
+                               value="<?= !isset($option[$id]) ? null : $block->escapeHtml($option[$id]) ?>"
+                               style="width: 100%; padding: 0 9px"
+                        />
+                        <?php
+            }
+        } else {
+            ?>
+                    <textarea data-validate="{required: <?= $require ? 'true' : 'false' ?>}"
+                              placeholder="<?= $block->escapeHtml($label) ?>"
+                              name="field[<?= $type; ?>][<?= $id; ?>]"
+                              style="width: 100%; height: 100px;"><?= !isset($option[$id]) ? '' : $option[$id] ?></textarea>
+                    <?php
+        } ?>
+            </div>
+        </div>
+        <?php
+    }
+}
+?>

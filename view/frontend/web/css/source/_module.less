@@ -1,0 +1,432 @@
+//Gift Registry view
+@font-title: 'Playfair Display';
+@font-base: 'HelveticaNeue';
+@color-text: @color-black;
+@color-text-hover: @color-gray20;
+@color-link-text: @color-black;
+@color-link-hover: @color-gray20;
+@color-link-active: @color-gray20;
+@color-bg1: @color-black;
+@color-bg2: @color-gray95;
+@color-bg3: @color-white-smoke;
+@color-bg0: @color-white;
+@color-bg: #dcc182;
+@background-button: @color-black;
+@color-button: @color-white;
+@background-button-hover: @color-gray20;
+@color-error: #ff0000;
+@import '_fonts.less';
+@import '_new-gift.less';
+@import "_manage-registry.less";
+@import "_list-gift.less";
+@import "_default-gift-registry.less";
+@import "_find-registry.less";
+@import "_view-registry.less";
+& when (@media-common = true) {
+  //@import (css) "./Magenest_GiftRegistry/css/font-awesome.css";
+  .loading-mask {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Chrome/Safari/Opera */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by any browser but < IE9 */
+  }
+  .box-shadow-none {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+  }
+  //Button add to gift registry
+  .add-to-gift-registry {
+    a {
+      text-transform: uppercase;
+      color: @color-text;
+      &:focus {
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+      }
+    }
+    i {
+      margin-right: 5px;
+    }
+    &:hover {
+      a {
+        color: @color-text-hover;
+      }
+      i {
+        color: @color-text-hover;
+      }
+    }
+  }
+  .add-to-gift-registry-action {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    border-top: 1px solid #ccc;
+    padding: 15px 0 30px;
+  }
+  .giftregistry-table {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    .giftregistry-modal {
+      background: #fff;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      -moz-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      -o-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      width: 600px;
+      max-width: 90vw;
+      max-height: 90vh;
+      padding: 15px 0 15px 30px;
+      text-align: left;
+    }
+    .giftregistry-close {
+      position: absolute;
+      font-size: 24px;
+      right: 10px;
+      top: 0;
+      cursor: pointer;
+    }
+    .giftregistry-title {
+      font-size: 16px;
+      font-weight: 400;
+      color: @color-text;
+      padding: 15px 0;
+      i {
+        font-size: 20px;
+        margin-right: 5px;
+        vertical-align: top;
+      }
+    }
+    .giftregistry-modal-content {
+      overflow: auto;
+      max-height: calc(~'90vh - 30px');
+      &::-webkit-scrollbar {
+        width: 5px;
+      }
+      /* Track */
+      &::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px grey;
+        border-radius: 10px;
+      }
+      /* Handle */
+      &::-webkit-scrollbar-thumb {
+        background: #ddd;
+        border-radius: 10px;
+      }
+    }
+    button {
+      height: 45px;
+      background: @background-button;
+      border: 0;
+      color: @color-button;
+      width: 100px;
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      border-radius: 4px;
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+      &:hover {
+        background: @background-button-hover;
+      }
+    }
+    .field-choose {
+      padding: 5px 30px 5px 0;
+      color: @color-text;
+      .field {
+        border-bottom: 1px solid #ddd;
+        margin-top: 10px;
+      }
+      &:last-child {
+        border-bottom: 0;
+      }
+      input {
+        vertical-align: top;
+        margin-top: 4px;
+        &:focus {
+          -webkit-box-shadow: none;
+          -moz-box-shadow: none;
+          box-shadow: none;
+        }
+      }
+    }
+    .giftregistry-action {
+      padding: 15px 0;
+    }
+  }
+  //Popup remove to gift registry
+  .list-remove-gift {
+    .field {
+      input {
+        position: absolute;
+        margin: 0;
+        top: 5px;
+        left: 20px;
+      }
+    }
+    .choose-name {
+      font-weight: 600;
+      font-size: 16px;
+    }
+  }
+  .action-gift-registry {
+    padding-top: 15px;
+    a {
+      color: @color-gray40;
+      font-weight: 600;
+      text-transform: uppercase;
+      &:hover {
+        color: @color-text-hover;
+      }
+      &:focus {
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+      }
+    }
+    i {
+      margin-right: 5px;
+    }
+  }
+  .remove-gift-registry {
+    display: inline-block;
+    vertical-align: top;
+  }
+  .set-priority {
+    display: inline-block;
+    vertical-align: top;
+  }
+  //Gift Registry popup
+  .addto-giftregistry-event {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    .giftregistry-table {
+      position: absolute;
+      width: 700px;
+      max-width: 90vw;
+      max-height: 90vh;
+      padding: 15px;
+      background: #fff;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      -moz-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      -o-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      .list-gift {
+        margin-bottom: 15px;
+      }
+    }
+    .giftregistry-close {
+      cursor: pointer;
+      position: absolute;
+      right: -5px;
+      top: -15px;
+      font-size: 24px;
+    }
+    .giftregistry-title {
+      padding-bottom: 15px;
+      &:before {
+        content: "\f06b";
+        font-family: FontAwesome;
+        font-size: 20px;
+        margin-right: 5px;
+      }
+    }
+  }
+  //Set priority
+  .list-option {
+    display: inline-block;
+    vertical-align: top;
+    width: 49%;
+  }
+  .set-priority-action {
+    display: inline-block;
+    vertical-align: top;
+    width: 49%;
+    margin-bottom: 10px;
+  }
+  .label {
+    display: inline-block;
+    vertical-align: top;
+  }
+  .priority-box {
+    display: inline-block;
+    vertical-align: top;
+    select {
+      margin-left: 15px;
+      &:focus {
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+        border: 1px solid #666;
+      }
+    }
+  }
+  .choose-name {
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .clearfix:after {
+    clear: both;
+    content: '';
+    display: block;
+    height: 0;
+    visibility: hidden;
+  }
+  #giftregistry-message-error {
+    color: @color-error;
+  }
+  #giftregistry-remove-error {
+    color: @color-error;
+  }
+  #giftregistry-priority-error {
+    color: @color-error;
+  }
+  #infowindow-content .title {
+    font-weight: bold;
+  }
+
+  #infowindow-content {
+    display: none;
+  }
+
+  #map #infowindow-content {
+    display: inline;
+  }
+
+  .pac-card {
+    margin: 10px 10px 0 0;
+    border-radius: 2px 0 0 2px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    background-color: #fff;
+    font-family: Roboto;
+  }
+
+  .pac-container {
+    z-index: 9999999 !important;
+    top: 200px !important;
+    left: 50px !important;
+    position: relative;
+    display: none;
+  }
+
+  .pac-controls {
+    display: inline-block;
+    padding: 5px 11px;
+  }
+
+  .pac-controls label {
+    font-family: Roboto;
+    font-size: 13px;
+    font-weight: 300;
+  }
+}
+//Desktop
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m){
+  .add-to-gift-registry {
+    width: 100%;
+  }
+}
+//Mobile
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m){
+  .add-to-gift-registry-action {
+    text-align: center;
+  }
+}
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__s){
+  //Gift Registry popup
+  .addto-giftregistry-event {
+    .giftregistry-left {
+      display: table-cell;
+      width: 50%;
+    }
+    .product-name-giftregistry {
+      font-size: 22px;
+      font-weight: 700;
+      padding: 15px 0;
+    }
+    .giftregistry-title {
+      padding-bottom: 15px;
+      &:before {
+        content: "\f06b";
+        font-family: FontAwesome;
+        font-size: 20px;
+        margin-right: 5px;
+      }
+    }
+  }
+  .set-priority-gift {
+    .set-priority-action {
+      padding: 5px 0;
+    }
+  }
+}
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__xs){
+  //Gift Registry popup
+  .addto-giftregistry-event {
+    .giftregistry-content {
+      display: block;
+      text-align: center;
+    }
+    .giftregistry-table {
+      .list-gift {
+        margin-bottom: 5px;
+      }
+    }
+    .giftregistry-left {
+      display: block;
+      width: 100%;
+    }
+    .product-image-giftregistry {
+      width: 100%;
+      a {
+        width: auto;
+      }
+      img {
+        max-width: 240px;
+      }
+    }
+    .giftregistry-right {
+      display: block;
+      width: 100%;
+    }
+    .giftregistry-close {
+      right: -10px;
+      top: -17px;
+      font-size: 16px;
+    }
+    .giftregistry-title {
+      padding-bottom: 10px;
+    }
+  }
+  .giftregistry-table .giftregistry-modal {
+    padding: 15px 0 15px 15px;
+  }
+  .giftregistry-table .field-choose {
+    padding: 5px 15px 5px 0;
+  }
+  .priority-box select {
+    margin-left: 0;
+  }
+}

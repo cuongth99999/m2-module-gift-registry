@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="editor"/>
+    <body>
+        <referenceContainer name="content">
+            <block class="Magenest\GiftRegistry\Block\Adminhtml\Type\Edit" name="giftregistry_type_edit"/>
+        </referenceContainer>
+        <referenceContainer name="left">
+            <block class="Magenest\GiftRegistry\Block\Adminhtml\Type\Edit\Tabs" name="type_edit_tabs">
+                <block class="Magenest\GiftRegistry\Block\Adminhtml\Type\Edit\Tab\Main" name="type_edit_tab_main"/>
+                <block class="Magenest\GiftRegistry\Block\Adminhtml\Type\Edit\Tab\Fields" name="type_edit_tab_fields"/>
+                <block class="Magenest\GiftRegistry\Block\Adminhtml\Type\Edit\Tab\Images" name="type_edit_tab_background"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">giftregistry_type_tabs</argument>
+                    <argument name="block" xsi:type="string">type_edit_tab_main</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">giftregistry_type_form</argument>
+                    <argument name="block" xsi:type="string">type_edit_tab_fields</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">giftregistry_type_background</argument>
+                    <argument name="block" xsi:type="string">type_edit_tab_background</argument>
+                </action>
+            </block>
+            <referenceContainer name="js">
+                <block class="Magenest\GiftRegistry\Block\Adminhtml\Type\Edit\Js" template="Magenest_GiftRegistry::type/js.phtml" name="magenest_giftregistry_js"/>
+            </referenceContainer>
+        </referenceContainer>
+    </body>
+</page>

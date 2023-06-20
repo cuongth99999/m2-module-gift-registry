@@ -1,0 +1,15 @@
+<!-- ko if: checkGiftRegistry() -->
+<div id="giftregistry-table1" class="giftregistry-table1" data-role="giftregistry-table1">
+    <select id="list-gift" class="list-gift" data-bind="foreach: giftregistry">
+            <option class="each-gift"
+                    data-action="add-item-gift"
+                    data-postgift='1'
+                    data-giftid=""
+                    url=""
+            >
+            <span class="gift-title"></span>
+            </option>
+    </select>
+    <button id="add-gift-button" type="button" class="add-gift-button">Add</button>
+</div>
+<!-- /ko -->

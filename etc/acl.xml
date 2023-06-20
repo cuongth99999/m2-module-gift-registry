@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magenest_GiftRegistry::giftregistry" title="Gift Registry" sortOrder="100">
+                    <resource id="Magenest_GiftRegistry::manager" title="Manage Gift Registry" sortOrder="10" />
+                    <resource id="Magenest_GiftRegistry::type" title="Manage Event Type" sortOrder="20" />
+                    <resource id="Magenest_GiftRegistry::order" title="Manage Order" sortOrder="30" />
+                    <resource id="Magenest_GiftRegistry::setting" title="Setting" sortOrder="40" />
+                </resource>
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Magenest_GiftRegistry::config_giftregistry" title="Gift Registry Section" />
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

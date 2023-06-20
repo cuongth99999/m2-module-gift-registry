@@ -1,0 +1,64 @@
+<!-- ko if: isshow() -->
+<div class="remove-gift-registry action-gift-registry" data-role="add-to-links">
+    <a href="#"
+       style="text-decoration: none"
+       data-product-id="<?=$block->getProduct()->getId()?>"
+       id="remove-gift-link"
+       data-action="remove-gift-registry"
+       data-product-url="<?= $block->getProduct()->getProductUrl() ?>"
+       data-bind="click: $data.showPopup, attr: {title: $t('Remove from gift registry')}"
+       role="button">
+        <i class="fa fa-minus-circle" aria-hidden="true" style="font-size: 20px"></i>
+        <span data-bind="i18n: 'Remove from gift registry'"></span>
+    </a>
+</div>
+<div id="remove-giftregistry-table" class="remove-giftregistry-table giftregistry-table"
+     data-role="remove-giftregistry-table" style="display: none">
+    <div class="giftregistry-modal">
+        <div id="giftregistry-remove-error" class="message-error message"></div>
+        <div class="giftregistry-modal-content">
+            <div class="giftregistry-close"><i class="fa fa-times" aria-hidden="true"></i>
+            </div>
+            <div class="giftregistry-title">
+                <i class="fa fa-gift" aria-hidden="true"></i>
+                Please choose a Gift Registry Event for the selected product:
+            </div>
+            <div class="gr-remove-list">
+                <div id="list-remove-gift" class="list-remove-gift">
+                    <!-- ko foreach: giftregistries() -->
+                    <div class='field-choose'>
+                        <label>
+                            <input type='radio' data-bind="value: gift_id" name='event_type'>
+                            <span class="choose-name" data-bind="attr: { title: title},text: title "></span>
+                        </label>
+                        <!-- ko if: $parent.type() === 'configurable' -->
+                        <!-- ko foreach: option() -->
+                        <dl style="margin: 10px 0; position: relative; padding-left: 50px">
+                            <input data-bind="attr: {value: gift_item_id, name: 'gift_item['+$parent.gift_id()+'][]'}"
+                                   type="checkbox"/>
+                            <div class="list-option">
+                                <!-- ko foreach: option() -->
+                                <dd style="margin-bottom: 0">
+                                    <b data-bind="text: lable"></b>: <span data-bind="text: value"></span>
+                                </dd>
+                                <!--/ko-->
+                            </div>
+                        </dl>
+                        <!--/ko-->
+                        <!--/ko-->
+                    </div>
+                    <!--/ko-->
+                </div>
+            </div>
+            <div class="giftregistry-action">
+                <button id="remove-gift-button"
+                        type="button"
+                        class="remove-gift-button gift-button"
+                        data-bind="click: $data.removeItem">
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /ko -->

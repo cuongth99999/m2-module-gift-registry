@@ -1,0 +1,254 @@
+
+.manage-options{
+    text-align: center;
+}
+.option-title {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+/*Share*/
+
+.submit_btn, .back_btn{
+    border: 1px solid #ccc;
+    color: #333;
+    cursor: pointer;
+    display: inline-block;
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    margin: 0;
+    padding: 7px 15px;
+    font-size: 1.4rem;
+    line-height: 1.6rem;
+    box-sizing: border-box;
+    vertical-align: middle;
+}
+.list_btn{
+    text-align: center;
+    padding: 20px;
+}
+.email_label {
+    font-weight: 600;
+}
+.note{
+    font-size: 12px;
+}
+.head_div{
+    text-align: center  ;
+}
+.giftregistry-share{
+    /*display: none;*/
+}
+#giftregistry-share {
+    text-align: center;
+}
+.list-share {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    margin-top: 10px;
+    text-align: center;
+}
+.list-share-li{
+    display: inline-block;
+    padding-right: 10px;
+}
+#result-table {
+    position: relative;
+    top: 50px;
+}
+.guest-view-url > h3{
+    color:#333333;
+}
+.guest-view-url > h3:hover{
+    color:whitesmoke;
+}
+.guest-view-url :hover{
+    color:whitesmoke;
+}
+.change_pass {
+    margin-top: 10px;
+}
+.show-div {
+    height: 1000px;
+    width: 100%;
+    height: 775px;
+    padding: 10px;
+    margin-top: 10px;
+}
+#list-share {
+    margin: 10px 0;
+    background-color: #fff;
+}
+#select-action-view{
+    margin: 10px;
+}
+.loader_loadpage {
+    position: relative;
+    left: 48%;
+    top: 48%;
+    border: 5px solid #eeeeee;
+    border-top: 5px solid black;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.select-image {
+    cursor: pointer;
+}
+
+#error-type-file{
+    width: 100%;
+    color: red;
+    padding: 10px;
+    left: 0;
+    top: 67px;
+}
+.confirmDelete,.noItemDelete{
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+.confirmDelete-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 700px;
+    max-width: 85vw;
+}
+.gr-action-delete{
+    display: flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+}
+.gr-action-delete input{
+    margin: 15px;
+}
+
+#infowindow-content .title {
+    font-weight: bold;
+}
+
+#infowindow-content {
+    display: none;
+}
+
+.pac-card {
+    margin: 10px 10px 0 0;
+    border-radius: 2px 0 0 2px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    background-color: #fff;
+    font-family: Roboto;
+}
+
+#pac-container {
+    padding-bottom: 12px;
+    margin-right: 12px;
+}
+
+.pac-controls {
+    display: inline-block;
+    padding: 5px 11px;
+}
+
+.pac-controls label {
+    font-family: Roboto;
+    font-size: 13px;
+    font-weight: 300;
+}
+#url-share :hover {
+    cursor : pointer;
+}
+#url-share img{
+    width: 48px;
+}
+#i-url-share{
+    font-size: 40px;
+    position: relative;
+    top: 6px;
+}
+.modal-address {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 9; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content-address {
+    text-align: center;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/*---------------------------*/
+/*New style*/
+/*---------------------------*/
+
+#registry-infor-form .fieldset > .legend {
+    width: 100%;
+    margin-left: 0;
+    border-bottom: 2px solid #d6d6d6;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+#registry-infor-form .fieldset > .field{
+    margin-bottom:15px;
+}
+#registry-infor-form .fieldset > .field > .label {
+    padding: 0;
+    text-align: left;
+    margin: 5px;
+}
+
+#registry-infor-form .pac-controls {
+    padding: 10px 0;
+}
+
+
+#registry-infor-form .field.choice::before {
+    width: 0;
+    padding: 0;
+}

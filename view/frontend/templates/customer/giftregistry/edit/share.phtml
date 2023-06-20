@@ -1,0 +1,218 @@
+<?php
+    /** @var $block \Magenest\GiftRegistry\Block\Registry\ManageRegistry */
+    $registry = $block->getRegistry();
+    $orderCollection = $block->getGuestCollection();
+    $url = $block->getLinkShare();
+    $link = $block->getViewFileUrl('/');
+    if (!$url) {
+        return;
+    }
+
+    if ($registry->getData('image') != "") {
+        $image = $block->getImageGRUrl($registry->getData('image'));
+    } else {
+        $image = $link . '/Magenest_GiftRegistry/images/guest-view/banner-default.jpg';
+    }
+    $content = str_replace('{wishlist_url}', $url, $block->getDescription() ?? '');
+    $url_length = strlen($url);
+    $url = urlencode($url);
+    $title = str_replace(["\r", "\n"], ["&#013;", "&#010;"], $block->getGiftTitle());
+    $summary = preg_replace("/[\r\n]{2,}/", "\n\n", trim(strip_tags(html_entity_decode($content))));
+    $fb_content = str_replace(["\r", "\n"], ["&#013;", "&#010;"], $summary);
+    $twitter_summary = substr(str_replace(["\r", "\n"], ["&#013;", "&#010;"], $summary), 0, 277 - $url_length);
+    $mailContent = str_replace(["\r", "\n"], ["&#013;", "&#010;"], $summary);
+    $link = $block->getViewFileUrl('/');
+    $facebook_share_link = "https://www.facebook.com/sharer/sharer.php?u=" . $url . "&quote=" . $title . "%0D%0A" . $fb_content . "&i=" . $image;
+    $twitter_share_link = "https://twitter.com/share?url=%0D%0A" . $url . "&amp;text=" . $twitter_summary;
+?>
+
+<style>
+    #share-registry{
+        border-bottom: 4px solid #000;
+    }
+</style>
+
+<div id="list-share">
+    <ul class="list-share">
+        <li class="list-share-li">
+            <a target="_blank" class="facebook" href="<?= $facebook_share_link ?>">
+                <img src="<?= $link . '/Magenest_GiftRegistry/images/icon/facebook2.png' ?>" alt="Share via Facebook"/>
+            </a>
+        </li>
+        <li class="list-share-li">
+            <a target="_blank" class="twitter" href="<?= $twitter_share_link ?>">
+                <img src="<?= $link . '/Magenest_GiftRegistry/images/icon/twitter2.png' ?>" alt="Share via Twitter">
+            </a>
+        </li>
+        <li class="list-share-li">
+            <a id="share-email" class="email" href="#">
+                <img src="<?= $link . '/Magenest_GiftRegistry/images/icon/email2.png' ?>" alt="Share via Email">
+            </a>
+        </li>
+        <li class="list-share-li">
+            <a id="url-share" class="link">
+                <img src="<?= $link . '/Magenest_GiftRegistry/images/link-icon.svg' ?>" alt="Share via URL">
+            </a>
+        </li>
+    </ul>
+</div>
+
+<div class="list-item-container" id="list-container">
+    <div class="list-item-content">
+        <form id="list_item_form" method="POST" data-mage-init='{"validation": {}}'>
+            <input name="event_id" value="<?= $registry->getData('gift_id') ?>" hidden/>
+            <input name="giftregistry_tab" value="items" hidden/>
+            <table class="data-grid" id="list-guest" align-content="center">
+                <tr>
+                    <th>
+                        <input id="select-delete-guest" type="checkbox" style="width: 16px; height: 16px">
+                    </th>
+                    <th class="col"><span><?= __('Customer Name') ?></span></th>
+                    <th class="col"><span><?= __('Customer Email') ?></span></th>
+                    <th class="col"><span><?= __('Actived') ?></span></th>
+                </tr>
+                <?php if (count($orderCollection) == 0): ?>
+                    <tr class="data-grid-tr-no-data">
+                        <td class="empty-text" colspan="8"><?= __('We couldn\'t find any records.') ?></td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($orderCollection as $customer): ?>
+                        <?php
+                        /** @var \Magento\Customer\Model\Customer $customerData */
+                        $customerEmail = $customer->getData('customer_email');
+                        $customerData = $block->getCustomer($customerEmail);
+                        $customerName = !empty($customerData) ? $customerData['firstname'] . " " . $customerData['lastname'] : "N/A";
+                        $referralChecker = $customer->getData('referral_checker');
+                        $guestId = $customer->getData('guest_id');
+                        $giftregistryId = $registry->getData('gift_id');
+                        ?>
+                        <tr>
+                            <td data-th="<?= $block->escapeHtml(__('Checkbox')) ?>" class="col-title">
+                                <input class="checkdeleteguest"
+                                       type="checkbox"
+                                       value="<?= $guestId ?>"
+                                       idRegistry="<?= $block->getRegistryId() ?>" style="height: 16px; width: 16px">
+                            </td>
+                            <td data-th="<?= $block->escapeHtml(__('Customer Name')) ?>" class="col-title">
+                                <?= $customerName ?>
+                            </td>
+                            <td data-th="<?= $block->escapeHtml(__('Customer Email')) ?>" class="col-title">
+                                <?= $customerEmail ?>
+                            </td>
+                            <?php if (empty($customerData)) { ?>
+                                <td data-th="<?= $block->escapeHtml(__('Actived')) ?>" class="col-title">
+                                    <?= __('No account') ?>
+                                </td>
+                            <?php } else { ?>
+                                <td data-th="<?= $block->escapeHtml(__('Actived')) ?>" class="col-title">
+                                    <?= __('Have account') ?>
+                                </td>
+                            <?php } ?>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </table>
+        </form>
+    </div>
+    <div style="margin: 30px 0; text-align: center; float: left;">
+        <button id="btnDellAllGuest"
+                class="action" type="button"
+                post-url="<?= $block->getUrl('gift_registry/customer/guest/') ?>"
+                idGift="<?= $block->getData('guest_id') ?>">
+            <?= __('Delete') ?>
+        </button>
+    </div>
+</div>
+
+
+<div class="popup-share-email" hidden>
+    <div id="share-container" class="share-container">
+        <div class="share-email-close">
+          <span class="close">×</span>
+        </div>
+        <div type="hidden" id="form-key" value="<?= $block->getFormKey(); ?>"></div>
+        <div id="share_email_div">
+            <form method="POST" id="share_via_email_form" class="form email" action="">
+                <input type="hidden" name="giftregistry-share-email" value="1"/>
+                <div type="hidden" id="giftregistry-id" value="<?= $block->getRegistryId() ?>"></div>
+                <div class="head_div">
+                    <label class="email_label" for="recipient">
+                        <h2 class="email_label"><?= __('Share via Email') ?></h2>
+                    </label>
+                </div>
+                <div class="form-element">
+                    <div class="form-field">
+                        <label class="email_label" for="recipient"><?= __('Recipient') ?></label>
+                        <div class="field">
+                            <div class="input-box">
+                                <input name="recipient" id="recipient" type="text"
+                                       size="40">
+                                <span class="note"><?= __("Insert email addresses here! Email addresses are separated by comma ',' (not include space ' ')") ?></span>
+                                <label class="mage-error" id="email-validate-error" style="display: none; color:red;">
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="form-field">
+                        <label class="email_label" for="email_subject"><?= __('Subject') ?></label>
+                        <input name="email_subject" id="email_subject" type="text"
+                               value="<?= $block->getGiftTitle(); ?>"
+                               size="40">
+                    </div>
+                </div>
+                <div class="form-field field-message">
+                    <label class="email_label" for="message"><?= __('Message') ?></label>
+                    <textarea id="message" name="message" rows=""
+                              cols=""><?= __('Link Gift Registry: ') . $block->getLinkShare(); ?>&#013;&#013;<?= $mailContent ?>
+                    </textarea>
+                </div>
+                <div class="list_btn">
+                    <button id="form_email_submit_btn" type="button">
+                        <?= __('Submit') ?>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--Popup share url-->
+<div id="popupLogin" class="modal-address">
+    <!-- Modal content -->
+    <div class="modal-content-address">
+        <span class="close">&times;</span>
+        <div class="fieldset">
+            <span id="rl-noti-copied" style="display: none">
+                <i>
+                    <?= __('Link was copied to the clipboard.') ?>
+                </i>
+            </span>
+            <div class="field">
+                <div class="label">Share URL:</div>
+                <input id="url-share-txt" type="text" value="<?= $block->getLinkShare()?>" readonly/>
+                <input id="btn-copy" class="action primary" type="button" value="Copy To Clipboard"/>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End Popup share url-->
+
+<div id="confirmDeleteGuest" class="confirmDelete">
+    <div class="confirmDelete-content">
+        <div style="text-align: center">
+            <h3><?= __('Your item will be deleted! Are you sure?') ?></h3>
+            <div class="gr-action-delete">
+                <input type="button" class="primary action" id="okDeleteGuest" value="<?= __('Yes') ?>">
+                <input type="button" class="primary action" id="noDeleteGuest" value="<?= __('No') ?>">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="noItemDelete" class="noItemDelete">
+    <div class="confirmDelete-content">
+        <div style="text-align: center">
+            <h3><?= __(' Attention! You haven\'t selected any items!') ?></h3>
+            <input type="button" class="primary action" id="ok" value="<?= __('Ok') ?>">
+        </div>
+    </div>
+</div>

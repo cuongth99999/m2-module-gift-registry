@@ -1,0 +1,164 @@
+<?php
+/**
+ * @var $block \Magenest\GiftRegistry\Block\Account\MyGiftRegistry
+ */
+$listRegistry = $block->getListRegistry();
+$listEvent = $block->getListEvent();
+$link = $block->getViewFileUrl('/');
+$params = $block->getParamsRequest();
+?>
+<div id="filter-my-giftregistry">
+    <form method="GET">
+        <select name="filter_status">
+            <option value="all" <?= $params == "" ? "selected" : ""?>><?= __('All'); ?></option>
+            <option value="0" <?= $params == "0" ? "selected" : ""?>><?= __('Active'); ?></option>
+            <option value="1" <?= $params == "1" ? "selected" : ""?>><?= __('Expired'); ?></option>
+        </select>
+        <input type="submit" value="Filter"/>
+    </form>
+</div>
+<div class="registry-wrapper">
+    <?php if (!count($listRegistry)): ?>
+        <div class="message-notice notice message" data-ui-id="message-notice">
+            <span><?= __("You have no events in your registry list!") ?></span>
+        </div>
+    <?php else: ?>
+    <div class="list-registry-table">
+        <div class="list-registry-content">
+            <table class="data-grid" id="result-table">
+                <thead>
+                <tr>
+                    <th class="data-grid-th"><span><?= __('Image') ?></span></th>
+                    <th class="data-grid-th"><span><?= __('Title') ?></span></th>
+                    <th class="data-grid-th"><span><?= __('Type') ?></span></th>
+                    <th class="data-grid-th"><span><?= __('Status') ?></span></th>
+                    <th class="data-grid-th"><span><?= __('Location') ?></span></th>
+                    <th class="data-grid-th"><span><?= __('Date') ?></span></th>
+                    <th class="data-grid-th" colspan="3"><span><?= __('Action') ?></span></th>
+                </tr>
+                </thead>
+                <?php foreach ($listRegistry as $registry): ?>
+                <tbody>
+                    <tr>
+                        <td data-th="<?= $block->escapeHtml(__('Image')) ?>" class="col-image">
+                            <?php if ($registry['image'] == null): ?>
+                                <img src="<?= $link . '/Magenest_GiftRegistry/images/thumbnail-default.jpg' ?>"/>
+                            <?php
+                            else:
+                                $path = $block->getUrlImage($registry['image']);
+                                ?>
+                                <img src="<?= $path; ?>"/>
+                            <?php endif; ?>
+                        </td>
+                        <td data-th="<?= $block->escapeHtml(__('Title')) ?>" class="col-title" style="word-break: break-word">
+                            <?= $block->escapeHtml($registry['title']) ?>
+                        </td>
+                        <td data-th="<?= $block->escapeHtml(__('Type')) ?>" class="col-type">
+                            <?= $block->escapeHtml($block->getEventName($registry['type']))?>
+                        </td>
+                        <td data-th="<?= $block->escapeHtml(__('Status')) ?>" class="col-status">
+                            <?php if (!$registry['is_expired']): ?>
+                            <div class="active">
+                                <?= __('Active') ?>
+                            </div>
+                            <?php else: ?>
+                            <div class="expired">
+                                <?= __('Expired') ?>
+                            </div>
+                            <?php endif; ?>
+                        </td>
+                        <td data-th="<?= $block->escapeHtml(__('Location')) ?>" class="col-location">
+                            <?= $block->escapeHtml($registry['location']) ?>
+                        </td>
+                        <td data-th="<?= $block->escapeHtml(__('Date')) ?>" class="col-date" style="white-space: nowrap">
+                            <?= $registry['date'] ?>
+                        </td>
+                        <td class="tb-action">
+                            <?php if (!$registry['is_expired']): ?>
+                                <a href="<?= $block->getPreviewUrl($registry['gift_id'], $registry['type']) ?>" class="url-redirect">
+                                    <?= __('View')?>
+                                </a>
+                            <?php endif;?>
+                            <a href="<?= $block->getManageUrl($registry['type'], $registry['gift_id']) ?>" class="url-redirect">
+                                <?= __('Edit')?>
+                            </a>
+                            <a href="<?= $block->getDeleteUrl($registry['gift_id']) ?>" class="url-delete">
+                                <?= __('Delete')?>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+                <?php endforeach; ?>
+            </table>
+        </div>
+
+    </div>
+    <?php endif; ?>
+    <div class="registry-container">
+        <div class="all_gift_title"><h2><?= __('Choose An Event Type')?></h2></div>
+        <div class="list_registry" >
+            <?php foreach ($listEvent as $event):?>
+                <?php $eventType = $event->getData('event_type')?>
+                <?php if ($event->getData('status') == 1):?>
+                    <span class="each_gift">
+                    <div class="each-gift-type">
+                            <a href="<?= $block->getGiftUrl($event->getData('event_type'))?>" class="link-img">
+                        <?php
+                        $thumbnail = $event->getData('thumnail');
+                        if ($thumbnail != ''):
+                            $src = $block->getUrlImage($thumbnail);
+                            ?>
+                            <img src="<?= $src ?>">
+                        <?php
+                        else:
+                            ?>
+                            <img src="<?= $link . '/Magenest_GiftRegistry/images/gift-item.jpeg'; ?>">
+                        <?php
+                        endif;
+                        ?>
+                            </a>
+                        <div class="each-gift-detail">
+                            <div class="gift_title">
+                                <a href="<?= $block->getGiftUrl($event->getData('event_type'))?>"><h3><?= $block->escapeHtml($event->getData('event_title'));?></h3></a>
+                            </div>
+                            <?php if ($event->getData('description') != ''): ?>
+                                <div class="gift-description">
+                                    <span><?= $block->escapeHtml($event->getData('description')) ?></span>
+                                </div>
+                            <?php endif;?>
+                        </div>
+                    </div>
+
+                        </a>
+            </span>
+                <?php endif;?>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
+<script>
+    require(
+        [
+            'jquery',
+            'Magento_Ui/js/modal/confirm',
+            'mage/translate'
+    ],
+        function ($, confirm,$t){
+            $(".url-delete").click(function (e,flag) {
+                e.preventDefault();
+                var self = this;
+                confirm({
+                    title: $t('Delete Confirmation'),
+                    content: 'Are you sure you want to delete this gift registry?',
+                    actions: {
+                        confirm: function(){
+                            window.location = self.href;
+                        },
+                        cancel: function(){},
+                        always: function(){}
+                    }
+                });
+            });
+        }
+    );
+</script>

@@ -1,0 +1,373 @@
+<?php
+
+use Magenest\GiftRegistry\Block\Customer\Registry\NewRegistry;
+
+/** @var $block  NewRegistry */
+$type = $block->getRegistryType();
+$google_api = $block->getGoogleApi();
+$baseUrl = $block->getBaseUrl();
+$events_id = $block->getOwnerId();
+$eventTypeCollection = $block->getActiveEventType();
+$addressCollection = $block->getShippingAddress();
+$addressArr = $block->getCustomerAddress();
+$editEvent = $block->getGiftRegistry();
+$gift_option = $editEvent->getData('gift_options') != "" ? $editEvent->getData('gift_options') : $block->jsonEncode([]);
+$gift_option = $editEvent->getData('gift_options') != "" ? $block->jsonDecode($editEvent->getData('gift_options')) : [];
+$type = $block->getRegistryType();
+$dateTimeObj = new \DateTime($editEvent->getData('date') ?? '');
+
+$euDateFormat = $dateTimeObj->format('d-m-Y');
+$editMode = false;
+if ($editEvent->getId()) {
+    $editMode = true;
+}
+
+$allAdditionalFields = [
+    'general_information' => [],
+    'registrant_information' => [],
+    'privacy' => [],
+    'shipping_address_information' => [],
+    'additional_section' => []
+];
+if ($block->isShowAboutEvent()) {
+    $aboutEvents = $block->getFieldsAboutEvent();
+    foreach ($aboutEvents as $key => $field) {
+        if (!empty($field['group'])) {
+            $allAdditionalFields[$field['group']][] = $field;
+        }
+    }
+}
+$options = null;
+?>
+<form method="post" data-mage-init='{"validation": {}}' autocomplete="off"
+      action="<?php echo $baseUrl ?>gift_registry/customer/post" name="giftregistry_add_form" id="giftregistry_add_form">
+    <div class="baby-back-ground" style="position: relative;">
+        <div class="content">
+            <div class="title">
+                <h1><?php echo __('Let\'s get started!') ?></h1>
+            </div>
+            <div class="my-line"></div>
+            <div class="col-left-create col-sm-12">
+                <div class="group-fieldset">
+                    <?php if ($allAdditionalFields['additional_section']): ?>
+                        <fieldset class="fieldset">
+                            <h2 class="legend"><?php echo __("About Event") ?> </h2>
+                            <input type="hidden" name="type" value="<?php echo $type ?>">
+                            <?php
+                            echo $block->getChildBlock('newgift.additional.field')
+                                ->setData('fields', $allAdditionalFields['additional_section'])
+                                ->setData('options', $options)->toHtml();
+                            ?>
+                            <div class="my-clear"></div>
+                        </fieldset>
+                    <?php endif; ?>
+                    <fieldset class="fieldset">
+                        <h2 class="legend required"><?php echo __("Registrant Information") ?> </h2>
+                        <div style="display: table; width: 100%; margin-bottom: 15px">
+                            <div class="field required field-firstname">
+                                <div class="input-box">
+                                    <label class="label required"><?= __('First Name') ?></label>
+                                    <input type="text" data-validate="{required:true, 'validate-no-html-tags':true}" class="background-none" value=""
+                                           name="registrant[0][firstname]" title="<?php echo __("First Name") ?>"
+                                           id="firstName" class="input-text required-entry" placeholder="First Name">
+                                </div>
+                            </div>
+                            <div class="field required field-lastname">
+                                <div class="input-box">
+                                    <label class="label required"><?= __('Last Name') ?></label>
+                                    <input type="text" data-validate="{required:true, 'validate-no-html-tags':true}" class="background-none" value=""
+                                           name="registrant[0][lastname]" title="<?php echo __("Last name") ?>"
+                                           id="lastName" class="input-text required-entry" placeholder="Last Name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field required field-email">
+                            <div class="input-box">
+                                <label class="label required"><?= __('Email') ?></label>
+                                <input type="email" data-validate="{required:true,'validate-email':true}"
+                                       class="background-none" value="" name="registrant[0][email]"
+                                       title="<?php echo __('Email') ?>" id="email" class="input-text required-entry"
+                                       placeholder="Email">
+                            </div>
+                        </div>
+                        <?php
+                        echo $block->getChildBlock('newgift.additional.field')
+                            ->setData('fields', $allAdditionalFields['registrant_information'])
+                            ->setData('options', $options)->toHtml();
+                        ?>
+                    </fieldset>
+                    <fieldset class="fieldset">
+                        <h2 class="legend required"> <?php echo __('Privacy') ?></h2>
+                        <div class="field required">
+                            <div class="control">
+                                <select id="select-privacy" class="select" name="privacy"
+                                        data-validate="{required:true}" data-role="defined-selected">
+                                    <option value=""><?php echo __('Privacy Mode') ?></option>
+                                    <option value="private"> <?php echo __("Private") ?></option>
+                                    <option value="public"> <?php echo __("Public") ?></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="giftregistry-password" class="required password-field" style="margin-bottom: 15px">
+                        </div>
+                        <div id="giftregistry-re-password" class="required password-field" style="margin-bottom: 15px">
+                        </div>
+                        <div class="field choice field-showinsearch">
+                            <input type="checkbox" id="show_in_search_result" name="show_in_search" class="checkbox"
+                                   title="<?php echo __("Show in search result") ?>">
+                            <label class="label"
+                                   for="show_in_search_result"><?php echo __("Show in search result") ?></label>
+                        </div>
+                        <?php
+                        echo $block->getChildBlock('newgift.additional.field')
+                            ->setData('fields', $allAdditionalFields['privacy'])
+                            ->setData('options', $options)->toHtml();
+                        ?>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="col-right-create col-sm-12">
+                <fieldset class="fieldset">
+
+                    <h2 class="legend"><?php echo __("General Information") ?> </h2>
+                    <input type="hidden" name="type" value="<?php echo $type ?>">
+                    <div style="display: table; width: 100%; margin-bottom: 15px">
+                        <div class="field field-title">
+                            <div class="input-box">
+                                <label class="label required"><?= __('Event\'s title') ?></label>
+                                <input type="text" data-validate="{required:true}" class="background-none" name="title"
+                                       value="" placeholder="Event's title"/>
+                            </div>
+                        </div>
+                        <div class="field required field-date">
+                            <div class="panel-body panel-date">
+                                <label class="label required"><?= __('Date') ?></label>
+                                <input name="date" data-validate="{required:true}" class="background-none"
+                                       class="picker date-calendar" id="datepicker" type="text" readonly
+                                       value="<?php echo $euDateFormat ?>" placeholder="Date"/>
+                                <span id="gift-date"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field" style="margin-bottom: 15px">
+                        <div class="input-box">
+                            <label class="label"><?= __('Description') ?></label>
+                            <textarea name="description" class="input-text" id="description"></textarea>
+                        </div>
+                    </div>
+                    <div class="field field-location">
+                        <div class="input-box">
+                            <label class="label"><?= __('Location') ?></label>
+                            <input type="text" id="pac-input" name="location" class="background-none"
+                                   placeholder="Location"/>
+                        </div>
+                        <div id="map"></div>
+                        <div id="infowindow-content">
+                            <img src="" width="16" height="16" id="place-icon">
+                            <span id="place-name" class="title"></span><br>
+                            <span id="place-address"></span>
+                        </div>
+                    </div>
+                    <?php
+                    echo $block->getChildBlock('newgift.additional.field')
+                        ->setData('fields', $allAdditionalFields['general_information'])
+                        ->setData('options', $options)->toHtml();
+                    ?>
+                </fieldset>
+
+                <fieldset class="fieldset">
+                    <div class="fieldset required">
+                        <h2 class="legend required"><?php echo __("Shipping Address Information") ?> </h2>
+                        <div class="field required">
+                            <div class="control">
+                                <select name="shipping_address" id="shipping_address"
+                                        data-validate="{required:true,'required-entry':true}"
+                                        data-role="defined-selected" data-action="add-new-shipping-address"
+                                        data-roles="shipping-add" data-role="defined-selected"
+                                        data-myvalue="<?php echo $editEvent->getData('shipping_address') ?>">
+                                    <option value=""><?php echo __('Shipping Address') ?></option>
+                                    <?php if ($addressArr) {
+                                        foreach ($addressArr as $address) {
+                                            ?>
+                                            <option
+                                                value="<?php echo $address['id'] ?>"><?php echo $block->escapeHtml($address['name']) ?></option>
+                                            <?php
+                                        }
+                                    } ?>
+                                    <option data-action="add-new-shipping-address"
+                                            value="new"><?php echo __("Add new address...") ?></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <?php
+                    echo $block->getChildBlock('newgift.additional.field')
+                        ->setData('fields', $allAdditionalFields['shipping_address_information'])
+                        ->setData('options', $options)->toHtml();
+                    ?>
+                </fieldset>
+            </div>
+            <div class="primary">
+                <button id="btn_submit_gift" type="button" style="display: block" class="action btn_save primary"
+                        data-action="save-address" title="<?php echo __("Save") ?>">
+                    <span><?php echo __("Save Your Gift") ?></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+<div style="display: none">
+    <div data-role="wrapper-modal-new-email" class="create-new-marketing-email full-height">
+        <?php
+        echo $block->getBlockHtml("giftregistry.address");
+        ?>
+    </div>
+</div>
+<script type="text/x-magento-init">
+    {
+        "#giftregistry_add_form": {
+            "validation": {},
+            "Magenest_GiftRegistry/js/giftregistry/new-gift": {
+                "address_url": "<?php echo $block->getUrl('gift_registry/customer/address'); ?>"
+            }
+        }
+    }
+
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAqH83QqletUOJXv14oLfl76kcEAW29vhw&libraries=places&callback=initMap">
+</script>
+<script>
+    // This example requires the Places library. Include the libraries=places
+    // parameter when you first load the API. For example:
+    // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+
+    function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: -33.8688, lng: 151.2195},
+            zoom: 13
+        });
+
+        // lat & long to address
+        function loadAddress(lat, lng) {
+            var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + lat + ',' + lng + '&key=AIzaSyAqH83QqletUOJXv14oLfl76kcEAW29vhw';
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var address = JSON.parse(this.responseText);
+                    document.getElementsByName("location")[0].value = address['results'][0]['formatted_address'];
+                }
+            };
+            xhttp.open("GET", url, true);
+            xhttp.send();
+        }
+
+        google.maps.event.addListener(map, 'click', function (event) {
+            loadAddress(event.latLng.lat(), event.latLng.lng());
+        });
+
+        var card = document.getElementById('pac-card');
+
+        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
+
+        navigator.geolocation.getCurrentPosition(function (position) {
+            var currentLatitude = position.coords.latitude;
+            var currentLongitude = position.coords.longitude;
+            var infoWindow = new google.maps.InfoWindow({map: map});
+            var currentLocation = {lat: currentLatitude, lng: currentLongitude};
+            infoWindow.setPosition(currentLocation);
+            var geocoder = new google.maps.Geocoder;
+            var latlng = {lat: parseFloat(currentLatitude), lng: parseFloat(currentLongitude)};
+
+            geocoder.geocode({'location': latlng}, function (results, status) {
+                if (status === google.maps.GeocoderStatus.OK) {
+                    if (results[1]) {
+                        var service = new google.maps.places.PlacesService(map);
+                        service.getDetails({
+                            placeId: results[1].place_id
+                        }, function (place, status) {
+                            document.getElementById('pac-input').value = place.formatted_address;
+                            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                                var marker = new google.maps.Marker({
+                                    map: map,
+                                    position: place.geometry.location
+                                });
+                                google.maps.event.addListener(marker, 'click', function () {
+                                    infowindow.open(map, this);
+                                });
+                                infoWindow.setContent(place.formatted_address);
+                                map.setCenter(results[0].geometry.location);
+                            }
+                        });
+                    } else {
+                        window.alert('No results found');
+                    }
+                } else {
+                    window.alert('Geocoder failed due to: ' + status);
+                }
+            });
+        });
+        const input = document.getElementById("pac-input");
+        const searchBox = new google.maps.places.SearchBox(input);
+        // Bias the SearchBox results towards current map's viewport.
+        map.addListener("bounds_changed", () => {
+            searchBox.setBounds(map.getBounds());
+        });
+        let markers = [];
+        // Listen for the event fired when the user selects a prediction and retrieve
+        // more details for that place.
+        searchBox.addListener("places_changed", () => {
+            const places = searchBox.getPlaces();
+
+            if (places.length == 0) {
+                return;
+            }
+            // Clear out the old markers.
+            markers.forEach(marker => {
+                marker.setMap(null);
+            });
+            markers = [];
+            // For each place, get the icon, name and location.
+            const bounds = new google.maps.LatLngBounds();
+            places.forEach(place => {
+                if (!place.geometry) {
+                    return;
+                }
+                const icon = {
+                    url: place.icon,
+                    size: new google.maps.Size(71, 71),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(17, 34),
+                    scaledSize: new google.maps.Size(25, 25)
+                };
+                // Create a marker for each place.
+                markers.push(
+                    new google.maps.Marker({
+                        map,
+                        icon,
+                        title: place.name,
+                        position: place.geometry.location
+                    })
+                );
+
+                if (place.geometry.viewport) {
+                    // Only geocodes have viewport.
+                    bounds.union(place.geometry.viewport);
+                } else {
+                    bounds.extend(place.geometry.location);
+                }
+            });
+            map.fitBounds(bounds);
+        });
+    }
+</script>
+
+<script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace('description',
+        {
+            language: 'en',
+            uiColor: '#dddddd',
+            forceSimpleAmpersand: 'true'
+        })
+</script>

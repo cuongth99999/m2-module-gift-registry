@@ -1,0 +1,136 @@
+<?php
+/** @var \Magenest\GiftRegistry\Block\Registry\ShowGift $block */
+    $eventType = $block->getEventType();
+    $registryId = $block->getGiftId();
+    $listEvent = $block->getListEvent();
+    $link = $block->getViewFileUrl('/');
+    $typeModel = $block->getTypeModel();
+    $listGiftRegistries = $block->getAllGiftRegistries();
+    $backgroundImg = $block->getBackgroundImage();
+    $style = $backgroundImg != null ? 'style="background-image: url('.$backgroundImg.')"' : "";
+?>
+
+<div class="gift_view" <?= $style ?>>
+    <div class="gift_search_wrapper">
+        <div class="gift-view-container">
+            <div class="create-a-registry">
+                <a href="<?= $block->getViewGiftRegistryUrl(); ?>">
+                    <button class="create-registry">
+                        <span>
+                            <?php
+                            if($block->isLoggedIn()):
+                                echo __('View my gift registry');
+                            else:
+                                echo __('Create a Registry');
+                            endif;
+                            ?>
+                        </span>
+                    </button>
+                </a>
+            </div>
+            <div class="gift-search-content">
+                <h2 class="gift_h2"><?= __('Search Gift Registry')?></h2>
+                <div class="gift_search_container">
+                    <form id="gift_search_form" data-mage-init='{"validation":{}}' class="gift_search_form" method="GET" action="<?= $block->getListSearchUrl() ?>">
+                        <input name="type" type="hidden" value="<?= $block->getEventType() ?>"/>
+                        <div class="select-type">
+                            <div class="select-box">
+                                <select id="filter-selected" name="filter" class="list-gift" title="Select Filter">
+                                    <option id="filter-title" value="1"><?= __("Filter By Title")?></option>
+                                    <option id="filter-name" value="2"><?= __("Filter By Name")?></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="search-name-wrapper" class="search-name-wrapper">
+
+                        </div>
+                        <div id="search-title-wrapper" class="search-title-wrapper">
+                            <div class="field">
+                                <input id="title" name="t" class="search_input" data-validate="{required:true}" type="text" placeholder="<?= __('Title') ?>">
+                            </div>
+                        </div>
+                        <div class="btn_wrapper">
+                            <button type="button" id="search_registry_submit_btn"><?= __('Search')?></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="reset-action">
+                <a href="<?= $block->getGiftRegistryPageUrl(); ?>">
+                    <button class="action reset"><?= __('Reset') ?></button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="gift-type-list">
+    <div class="gift-list-title">
+        <span><?= $block->escapeHtml($typeModel->getData('event_title')); ?></span>
+    </div>
+    <?php if(count($listGiftRegistries) == '0'):?>
+    <div class="no-records">
+        <span><?= __('No Gift Registry Available'); ?></span>
+    </div>
+    <?php else: ?>
+    <ul class="gift-type-items">
+        <?php foreach ($listGiftRegistries as $listGift): ?>
+            <li class="gift-type-item">
+                <div class="gift-type-info">
+                    <div class="gift-image">
+                        <a href="<?= $block->getPreviewUrl($listGift->getData('gift_id'),$listGift->getData('type')) ?>" class="link-image">
+                            <?php if($listGift->getData('image') == ''): ?>
+                                <img src="<?= $link . '/Magenest_GiftRegistry/images/thumbnail-default.jpg' ?>"/>
+                            <?php
+                                else:
+                                    $path = $block->getImageUrl($listGift->getData('image'));
+                            ?>
+                                <img src="<?= $path; ?>"/>
+                            <?php endif; ?>
+                        </a>
+                        <div class="gift-type-hover">
+                            <div class="gift-type-name">
+                                <a href="<?= $block->getPreviewUrl($listGift->getData('gift_id'),$listGift->getData('type')) ?>">
+                                    <?php if(strlen($listGift->getData('title')) <= 100){
+                                        echo $block->escapeHtml($listGift->getData('title'));
+                                    }else{
+                                        echo substr($block->escapeHtml($listGift->getData('title')),0,100).'...';
+                                    } ?>
+                                </a>
+                            </div>
+                            <div class="gift-type-description">
+                                <?php
+                                echo html_entity_decode($listGift->getData('description') ?? '');
+                                ?>
+                            </div>
+                            <div class="gift-type-detail">
+                                <div class="gift-registry-date">
+                                    <?= $listGift->getData('date'); ?>
+                                </div>
+                                <div class="gift-registry-location">
+                                    <?= $block->escapeHtml($listGift->getData('location')); ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+    <?php endif; ?>
+</div>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magenest_GiftRegistry/js/giftregistry/show-giftregistry": {
+                "actionUrl" : {
+                    "customerLogin":"<?= $block->getUrl('customer/account/login')?>",
+                    "registry": "<?= $block->getUrl("gift_registry/index/registry")?>+?isAjax=true",
+                    "search": "<?= $block->getListSearchUrl() ?>?isAjax=true"
+                },
+                "eventType": "<?= $eventType ?>",
+                "registryId": "<?= $registryId ?>"
+            }
+        }
+    }
+</script>

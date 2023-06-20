@@ -1,0 +1,149 @@
+<?php
+    /** @var $block \Magenest\GiftRegistry\Block\Registry\ManageRegistry */
+    $registrants = $block->getRegistrants();
+    if ($block->haveOrder() != 0) {
+        $orderCollection = $block->getOrderCollection();
+    }
+    $formKey = $block->getFormKey();
+?>
+<style>
+    #list-orders{
+        border-bottom: 4px solid #000;
+    }
+    .email a:hover {
+        color: red;
+    }
+</style>
+<div id="list-order-container" class="list-order-container">
+    <h4 style="padding-top: 5px;">
+        <?= __('List Items Received'); ?>
+    </h4>
+    <div class="list-order-content">
+        <table class="data-grid" id="list-order">
+            <tr>
+                <th class="col"><span><?= __('No.') ?></span></th>
+                <th class="col"><span><?= __('Item Name') ?></span></th>
+                <th class="col"><span><?= __('Qty') ?></span></th>
+                <th class="col"><span><?= __('Guest Email') ?></span></th>
+                <th class="col"><span><?= __('Date') ?></span></th>
+                <th class="col"><span><?= __('Order Status') ?></span></th>
+                <th class="col"><span><?= __('Send thank you emails') ?></span></th>
+            </tr>
+            <?php if ($block->haveOrder() != 0):$i = 0; ?>
+                <?php foreach ($orderCollection as $order): ?>
+                    <?php
+                    /** @var \Magento\Sales\Model\Order $orderItem */
+                    $orderItem = $block->getOrder($order->getData('order_id'));
+                    $checkEmail = $order->getData('check_email');
+                    $incognito = $order->getData('incognito');
+                    $tranId = $order->getData('id');
+                    ?>
+                    <?php foreach ($orderItem->getAllVisibleItems() as $item): ?>
+                        <tr data-function="page"
+                            data-page="<?= (int)($i / 10) ?>" <?php if ($i >= 10) echo "hidden" ?> >
+                            <td data-th="<?= $block->escapeHtml(__('Stt')) ?>" class="col-title">
+                                <?= ++$i ?>
+                            </td>
+                            <td data-th="<?= $block->escapeHtml(__('Product Name')) ?>" class="col-title">
+                                <?= ($item->getData('product_type') == 'simple' || $item->getData('product_type') == 'downloadable' || $item->getData('product_type') == 'virtual') ? $item->getData('name') : $item->getData('product_options')['simple_name']; ?>
+                            </td>
+                            <td data-th="<?= $block->escapeHtml(__('Qty')) ?>" class="col-title">
+                                <?= (int)$item->getQtyOrdered() ?>
+                            </td>
+
+                            <?php if ($incognito == 0) { ?>
+                                <td data-th="<?= $block->escapeHtml(__('Sender Email')) ?>" class="col-title">
+                                    <?= $orderItem->getBillingAddress()->getEmail() ?>
+                                </td>
+                            <?php } else { ?>
+                                <td data-th="<?= $block->escapeHtml(__('Sender Email')) ?>" class="col-title" style="color: green">
+                                    <?= __('An unnamed friend') ?>
+                                </td>
+                            <?php } ?>
+
+                            <td data-th="<?= $block->escapeHtml(__('Sender Name')) ?>" class="col-title">
+                                <?= date('Y-m-d', strtotime($orderItem->getData('created_at'))); ?>
+                            </td>
+                            <td data-th="<?= $block->escapeHtml(__('Status')) ?>" class="col-title">
+                                <?= $orderItem->getData('status'); ?>
+                            </td>
+
+                            <?php if ($checkEmail == null && $incognito == 0) { ?>
+                                <td>
+                                    <p style="border-style: ridge; text-align: center" class="email">
+                                        <a class="send-email" href="#" data-action="<?= $tranId ?>" data-email="<?= $orderItem->getBillingAddress()->getEmail() ?>" style="text-decoration: none">
+                                            <?= __("Send Email") ?>
+                                        </a>
+                                    </p>
+                                </td>
+                            <?php } else { ?>
+                                <td>
+                                    <p style="border-style: ridge; text-align: center"><?= __("Sent") ?></p>
+                                </td>
+                            <?php } ?>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr data-function="page" class="data-grid-tr-no-data">
+                    <td class="empty-text" colspan="8"><?= __('We couldn\'t find any records.') ?></td>
+                </tr>
+            <?php endif; ?>
+        </table>
+    </div>
+    <?php if ($block->haveOrder() != 0): ?>
+        <?php $page = (float)$i / 10 - (int)($i / 10) > 0 ? (int)($i / 10) + 1 : (int)($i / 10); ?>
+        <?php if ($page > 0 && $i > 10): ?>
+            <div class="list-page" style="text-align: center;margin:10px; background-color: white; color:#333333">
+                <?php for ($count = 0; $count < $page; $count++): ?>
+                    <div style="display: inline-block" data-function="tab" data-click="<?= $count ?>"><span
+                            style="padding: 5px;"><?= $count; ?></span></div>
+                <?php endfor; ?>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+</div>
+
+
+<div class="popup-share-email" hidden>
+    <div id="share-container" class="share-container">
+        <div class="share-email-close">
+            <i class="fa fa-times" aria-hidden="true"></i>
+        </div>
+        <div type="hidden" id="form-key" value="<?= $formKey ?>"></div>
+        <div id="share_email_div">
+            <form method="POST" id="share_via_email_form" class="form email" action="">
+                <input type="hidden" name="giftregistry-share-email" value="1"/>
+                <div class="head_div">
+                    <label class="email_label" for="email">
+                        <h2 class="email_label"><?= __('Send thank you emails') ?></h2>
+                    </label>
+                </div>
+                <div class="form-element">
+                    <div class="form-field">
+                        <div class="field">
+                            <div class="input-box">
+                                <label class="mage-error" id="email-validate-error" style="display: none; color:red;">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label class="email_label" for="subject"><?= __('Subject') ?></label>
+                        <input name="email_subject" id="subject" type="text" size="40">
+                    </div>
+                </div>
+                <div class="form-field field-message">
+                    <label class="email_label" for="message_email"><?= __('Message') ?></label>
+                    <textarea id="message_email" name="message" rows=""
+                              cols=""></textarea>
+                </div>
+                <div class="list_btn">
+                    <button id="submit_from_email" type="button">
+                        <?= __('Submit') ?>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

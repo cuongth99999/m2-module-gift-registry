@@ -1,0 +1,101 @@
+<!-- ko if: isshow() -->
+<div class="set-priority action-gift-registry">
+    <a href="#"
+       style="text-decoration: none"
+       id="set-priority"
+       data-action="det-priority-gift-registry"
+       data-bind="click: $data.showPopup, attr: {title: $t('Set priority')}"
+       role="button">
+        <i class="fa fa-list-ol" aria-hidden="true" style="font-size: 20px"></i>
+        <span data-bind="i18n: 'Set Priority'"></span>
+    </a>
+</div>
+<div id="set-priority-giftregistry-table" class="set-priority-giftregistry-table giftregistry-table" data-role="set-priority-giftregistry-table" style="display: none">
+    <div class="giftregistry-modal">
+        <div id="giftregistry-priority-error" class="message-error message" ></div>
+        <div class="giftregistry-modal-content">
+            <div class="giftregistry-close"><i class="fa fa-times" aria-hidden="true"></i>
+            </div>
+            <div class="giftregistry-title">
+                <i class="fa fa-gift" aria-hidden="true"></i>
+                Please choose a Gift Registry Event for the selected product:
+            </div>
+            <div class="gr-set-priority-list">
+                <div id="set-priority-gift" class="set-priority-gift">
+                    <!-- ko foreach: giftregistries() -->
+                    <div class='field-choose'>
+                        <label>
+                        <input type='radio' data-bind="value: gift_id" name='event_type'>
+                        <span class="choose-name" data-bind="attr: { title: title},text: title "></span>
+                        </label>
+                        <div class="field">
+                            <!-- ko if: $parent.type() === 'configurable' -->
+                            <!-- ko foreach: option() -->
+                            <dl style="margin: 5px 0; position: relative; padding: 5px 0 5px 20px;">
+                                <div class="list-option">
+                                    <input data-bind="attr: {value: gift_item_id, name: 'gift_item['+$parent.gift_id()+'][]'}" type="checkbox"/>
+                                    <div class="gift-option" style="display: inline-block; vertical-align: top">
+                                        <!-- ko foreach: option() -->
+                                        <dd style="margin-bottom: 0">
+                                            <b data-bind="text: lable"></b>: <span data-bind="text: value"></span>
+                                        </dd>
+                                        <!--/ko-->
+                                    </div>
+                                </div>
+                                <div class="set-priority-action">
+                                    <span class="label" style="font-weight: 600">Set Priority:</span>
+                                    <div class="priority-box">
+                                        <select data-bind="options: priority,
+                                                           optionsText: function(item) {
+                                                                return item.label
+                                                           },
+                                                           optionsValue: function(item) {
+                                                                return item.value
+                                                           },
+                                                           value: selected_priority,
+                                                           attr: {name: 'gr_priority['+gift_item_id()+'][]'}"
+                                                class="gr_priority"
+                                        >
+                                        </select>
+                                    </div>
+                                </div>
+                            </dl>
+                            <!-- /ko -->
+                            <!-- /ko -->
+                            <!-- ko if: $parent.type() === 'simple' -->
+                            <div class="set-priority-action">
+                                <span class="label" style="font-weight: 600">Set Priority:</span>
+                                <div class="priority-box">
+                                    <select data-bind="options: priority,
+                                                           optionsText: function(item) {
+                                                                return item.label
+                                                           },
+                                                           optionsValue: function(item) {
+                                                                return item.value
+                                                           },
+                                                           value: selected_priority,
+                                                           attr: {name: 'gr_priority['+gift_id()+'][]'}"
+                                            name=""
+                                            class="gr_priority"
+                                    >
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- /ko -->
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                </div>
+            </div>
+            <div class="giftregistry-action">
+                <button id="priority-gift-button"
+                        type="button"
+                        class="remove-gift-button gift-button"
+                        data-bind="click: $data.setPriority">
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /ko -->

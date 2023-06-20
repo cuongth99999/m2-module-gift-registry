@@ -1,0 +1,225 @@
+<?php
+/** @var $block \Magenest\GiftRegistry\Block\Registry\ManageRegistry */
+$registry = $block->getRegistry();
+$dateTimeObj = new \DateTime($registry->getData('date'));
+$usDateFormat = $dateTimeObj->format('m-d-Y');
+$imageAvatarUrl = $block->getImageAvatarbyType($registry->getData('type'));
+if ($imageAvatarUrl == "") {
+    $link = $block->getViewFileUrl('/');
+    $imageAvatarUrl = $link . '/Magenest_GiftRegistry/images/manage-gift/avata-default.jpg';
+}
+?>
+<input name="event_id" value="<?php echo $registry->getData('gift_id') ?>" hidden/>
+<div class="my_message">
+</div>
+<div class="manage-header">
+    <div class="registry-task-bar">
+        <div class="option-title">
+            <div class="img-title">
+                <img style="display: inline-block"
+                     src="<?= $imageAvatarUrl; ?>">
+            </div>
+            <div class="event-tile">
+                <h2 style="font-weight: 700"><?= $registry->getData('title'); ?></h2>
+                <div class="title-bottom">
+                    <div class="event-date bottom-item">
+                        <div class="label">
+                            <?php echo __('Event\'s Date: ')?>
+                        </div>
+                        <div class="value">
+                            <?php echo $usDateFormat ?>
+                        </div>
+                    </div>
+                    <div class="registry-desired bottom-item">
+                        <div class="label">
+                            <?php echo __('Desired Gifts:')?>
+                        </div>
+                        <div class="value" style="text-transform: capitalize">
+                            <?= $block->getTotalDesiredGifts($registry->getGiftId()); ?>
+                        </div>
+                    </div>
+                    <div class="registry-purchase bottom-item">
+                        <div class="label">
+                            <?php echo __('Received Gifts:')?>
+                        </div>
+                        <div class="value" style="text-transform: capitalize">
+                            <?= $block->getTotalReceivedGifts($registry->getGiftId()); ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="manage-options">
+            <div id="edit-information" class="each-option" >
+                <a href="<?= $block->getBaseUrl() . "gift-registry/manage/information/id/" . $registry->getGiftId();?>"><?php echo __('Edit Information') ?></a>
+            </div>
+            <div id="list-items" class="each-option">
+                <a href="<?= $block->getBaseUrl() . "gift-registry/manage/items/id/" . $registry->getGiftId();?>"><?php echo __('Items') ?></a>
+            </div>
+            <div id="list-orders" class="each-option">
+                <a href="<?= $block->getBaseUrl() . "gift-registry/manage/orders/id/" . $registry->getGiftId();?>"><?php echo __('Purchased Items') ?></a>
+            </div>
+            <?php if (!$block->getIsExpiredGift()): ?>
+                <div id="share-registry" class="each-option">
+                    <a href="<?= $block->getBaseUrl() . "gift-registry/manage/shares/id/" . $registry->getGiftId()?>"><?php echo __('Share To My Friends') ?></a>
+                </div>
+            <?php endif ?>
+        </div>
+    </div>
+</div>
+<!-- ko getTemplate() -->
+<!-- /ko -->
+<div class="manage-content">
+    <?php
+        $tab_enable = $block->getTabEnable();
+        switch ($tab_enable) {
+            case "items":
+                echo $block->getChildHtml('giftregistry.items');
+                break;
+            case "orders":
+                echo $block->getChildHtml('giftregistry.orders');
+                break;
+            case "shares":
+                echo $block->getChildHtml('giftregistry.share');
+                break;
+            default:
+                echo $block->getChildHtml('giftregistry.information');
+                break;
+        }
+    ?>
+</div>
+<input type="text" style="display: none" value="<?php echo $block->getListGiftUrl() ?>" id="list_gift_url">
+<!--    End Share Registry-->
+<div style="display: none">
+    <div data-role="wrapper-modal-new-email" class="create-new-marketing-email full-height">
+        <?php
+            echo $block->getChildHtml('giftregistry.address');
+        ?>
+    </div>
+</div>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAqH83QqletUOJXv14oLfl76kcEAW29vhw&libraries=places">
+</script>
+<script>
+    // This example requires the Places library. Include the libraries=places
+    // parameter when you first load the API. For example:
+    // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+
+    window.setTimeout(function(){
+        initMap();
+    }, 1000);
+
+    function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: -33.8688, lng: 151.2195},
+            zoom: 13
+        });
+        var locationAddress = '<?= $block->escapeHtml($registry->getLocation())?>';
+        if(locationAddress != ''){
+            var geocoder = new google.maps.Geocoder();
+            geocoder.geocode( { 'address': locationAddress}, function(results, status) {
+                if (status === 'OK') {
+                    map.setCenter(results[0].geometry.location);
+                    var marker = new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location
+                    });
+                } else {
+                    window.alert('Geocoder failed due to: ' + status);
+                }
+            });
+        }
+
+        // lat & long to address
+        function loadAddress(lat, lng) {
+            var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&key=AIzaSyAqH83QqletUOJXv14oLfl76kcEAW29vhw';
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var address = JSON.parse(this.responseText);
+                    document.getElementsByName("location")[0].value = address['results'][0]['formatted_address'];
+                }
+            };
+            xhttp.open("GET", url, true);
+            xhttp.send();
+        }
+        google.maps.event.addListener(map, 'click', function( event ){
+            loadAddress(event.latLng.lat(), event.latLng.lng());
+        });
+        var card = document.getElementById('pac-card');
+        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
+
+        const input = document.getElementById("pac-input");
+        const searchBox = new google.maps.places.SearchBox(input);
+        // Bias the SearchBox results towards current map's viewport.
+        map.addListener("bounds_changed", () => {
+            searchBox.setBounds(map.getBounds());
+        });
+        let markers = [];
+        // Listen for the event fired when the user selects a prediction and retrieve
+        // more details for that place.
+        searchBox.addListener("places_changed", () => {
+            const places = searchBox.getPlaces();
+
+            if (places.length == 0) {
+                return;
+            }
+            // Clear out the old markers.
+            markers.forEach(marker => {
+                marker.setMap(null);
+            });
+            markers = [];
+            // For each place, get the icon, name and location.
+            const bounds = new google.maps.LatLngBounds();
+            places.forEach(place => {
+                if (!place.geometry) {
+                    return;
+                }
+                const icon = {
+                    url: place.icon,
+                    size: new google.maps.Size(71, 71),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(17, 34),
+                    scaledSize: new google.maps.Size(25, 25)
+                };
+                // Create a marker for each place.
+                markers.push(
+                    new google.maps.Marker({
+                        map,
+                        icon,
+                        title: place.name,
+                        position: place.geometry.location
+                    })
+                );
+
+                if (place.geometry.viewport) {
+                    // Only geocodes have viewport.
+                    bounds.union(place.geometry.viewport);
+                } else {
+                    bounds.extend(place.geometry.location);
+                }
+            });
+            map.fitBounds(bounds);
+        });
+    }
+</script>
+
+<script type="text/x-magento-init">
+    {
+        "#registry-infor-form": {
+            "validation": {}
+        },
+        "*": {
+            "Magenest_GiftRegistry/js/giftregistry/manage-gift": {
+                "data_view_giftregistry": "<?php echo $block->getViewUrl($registry->getData());?>",
+                "rating": "<?php echo $block->getUpdateActionUrl() ?>?isAjax=true",
+                "product": "<?php echo $block->getAddProduct() ?>",
+                "send_mail_url": "<?php echo $block->getSendMailUrl()?>?isAjax=true",
+                "preview_url": "<?php echo $block->getPreviewUrl()?>?isAjax=true",
+                "error_type_1": "<?php echo __("Please add the background image!") ?>",
+                "error_type_2": "<?php echo __("Only accept png,jpeg,jpg extension!") ?>",
+                "max_upload_size": "<?php echo $block->getMaxUploadSize()?>"
+            }
+        }
+    }
+</script>

@@ -1,0 +1,81 @@
+<?php
+?>
+<div class="field title required">
+    <label class="label" for="zip"><span><?= __('Title') ?></span></label>
+    <div class="control">
+        <input type="text" name="title" value="<?= $block->escapeHtml($block->getAddress()->getPostcode()) ?>" title="<?= __('Zip/Postal Code') ?>" id="zip" class="input-text validate-zip-international <?= $this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('postcode') ?>">
+    </div>
+</div>
+
+<div class="field description required">
+    <label class="label" for="description "><span><?= __('Description') ?></span></label>
+    <div class="control">
+        <input type="text" name="description " value="<?= $block->escapeHtml($block->getAddress()->getPostcode()) ?>" title="<?= __('Zip/Postal Code') ?>" id="zip" class="input-text validate-zip-international <?= $this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('postcode') ?>">
+    </div>
+</div>
+
+<div class="field location required">
+    <label class="label" for="location"><span><?= __('Location') ?></span></label>
+    <div class="control">
+        <input type="text" name="location" value="<?= $block->escapeHtml($block->getAddress()->getPostcode()) ?>" title="<?= __('Zip/Postal Code') ?>" id="zip" class="input-text validate-zip-international <?= $this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('postcode') ?>">
+    </div>
+</div>
+
+<div class="field date required">
+    <label class="label" for="date"><span><?= __('Date') ?></span></label>
+    <div class="control">
+        <input type="text" name="location" value="<?= $block->escapeHtml($block->getAddress()->getPostcode()) ?>" title="<?= __('Zip/Postal Code') ?>" id="zip" class="input-text validate-zip-international <?= $this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('postcode') ?>">
+    </div>
+</div>
+
+<div class="field status required">
+    <label class="label" for="status"><span><?= __('Status') ?></span></label>
+    <div class="control">
+        <select name="status">
+            <option value="1" ><?php  echo __('Active') ?></option>
+            <option value="0" ><?php  echo __('Inactive') ?></option>
+
+        </select>
+    </div>
+</div>
+
+<div class="field visibility required">
+    <label class="label" for="status"><span><?= __('Status') ?></span></label>
+    <div class="control">
+        <select name="visibility">
+            <option value="1" ><?php  echo __('Active') ?></option>
+            <option value="0" ><?php  echo __('Inactive') ?></option>
+
+        </select>
+    </div>
+</div>
+
+<div class="field status required">
+    <label class="label" for="status"><span><?= __('Visibility') ?></span></label>
+    <div class="control">
+        <select name="status">
+            <option value="1" ><?php  echo __('Public View') ?></option>
+            <option value="0" ><?php  echo __('Private view') ?></option>
+
+        </select>
+    </div>
+</div>
+<script type="text/x-magento-init">
+    {
+        "#form-validate": {
+            "validation": {}
+        },
+        "#country": {
+            "regionUpdater": {
+                "optionalRegionAllowed": <?=($block->getConfig('general/region/display_all') ? 'true' : 'false'); ?>,
+                "regionListId": "#region_id",
+                "regionInputId": "#region",
+                "postcodeId": "#zip",
+                "form": "#form-validate",
+                "regionJson": <?= $this->helper('Magento\Directory\Helper\Data')->getRegionJson() ?>,
+                "defaultRegion": "<?= $block->getRegionId() ?>",
+                "countriesWithOptionalZip": <?= $this->helper('Magento\Directory\Helper\Data')->getCountriesWithOptionalZip(true) ?>
+            }
+        }
+    }
+</script>

@@ -1,0 +1,22 @@
+<!--
+/**
+ * Copyright © 2015 Magenest. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--@subject Invitation to buy gifts@-->
+
+{{template config_path="design/email/header_template"}}
+
+<body style="background:#F6F6F6; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:0; padding:0;">
+{{trans "Dear my friend!"}} <br/>
+{{var subject}} <br/>
+<br>
+Thank you for participating in our gift program.<br/>
+
+</br>
+<h4 style="font-size: 14px">Message Details: {{var message}}</h4>
+Best Regards,
+</body>
+
+{{template config_path="design/email/footer_template"}}

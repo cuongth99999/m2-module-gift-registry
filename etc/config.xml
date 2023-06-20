@@ -1,0 +1,24 @@
+<?xml	version="1.0"?>
+<config	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <giftregistry>
+            <version_config>
+                <version>2</version>
+            </version_config>
+            <general>
+                <enable>1</enable>
+                <hide_empty_event_type>0</hide_empty_event_type>
+            </general>
+            <email>
+                <sender>general</sender>
+                <email_template_share_email>giftregistry_email_email_template_share_email</email_template_share_email>
+                <template>giftregistry_email_template</template>
+                <gift_confirmation_email_form>giftregistry_email_gift_confirmation_email_form</gift_confirmation_email_form>
+                <thank_you_email_form>giftregistry_email_thank_you_email_form</thank_you_email_form>
+            </email>
+            <setting>
+                <desired_quantity>1</desired_quantity>
+            </setting>
+        </giftregistry>
+    </default>
+</config>

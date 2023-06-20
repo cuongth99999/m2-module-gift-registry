@@ -1,0 +1,17 @@
+<?php
+?>
+<fieldset class="fieldset">
+    <h2 class="legend"><?php echo __('Wedding Information')?></h2>
+    <div class="field required">
+        <label for="location" class="required label"><?php  echo __('Husband\'s name') ?></label>
+        <div class="input-box">
+            <input type="text" data-validate="{required:true}" id="husband_name" name="husband_name" value="<?php echo $options['husband_name']?>" />
+        </div>
+    </div>
+    <div class="field required">
+        <label for="location" class="required label"><?php  echo __('Wife\'s name') ?></label>
+        <div class="input-box">
+            <input type="text" data-validate="{required:true}" id="wife_name" name="wife_name" value="<?php echo $options['wife_name']?>" />
+        </div>
+    </div>
+</fieldset>

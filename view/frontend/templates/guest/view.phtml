@@ -1,0 +1,275 @@
+<?php
+/** @var  $block \Magenest\GiftRegistry\Block\Guest\View */
+$registry = $block->getGiftRegistry();
+$year = substr($registry->getData('date'), 0, 4);
+$month = substr($registry->getData('date'), 5, 2) - 1;
+$date = substr($registry->getData('date'), 8, 2) + 1;
+$items = $block->getGiftRegistryItem();
+$link = $block->getViewFileUrl('/');
+$pass = $block->getPassword();
+$isCheckCustomer = $block->checkCustomer();
+$privacy = $registry->getPrivacy();
+$registrant = $block->getRegistrantModel();
+$type = $block->getType();
+$title = $registry->getData('title');
+$eventTypeModel = $block->getEventTypeModel();
+
+if ($registry->getData('image') != "") {
+    $image = $block->getImageGRUrl($registry->getData('image'));
+} else {
+    $image = $link . '/Magenest_GiftRegistry/images/guest-view/banner-default.jpg';
+}
+if ($registry->getData('image_location') != "") {
+    $imageLocation = $block->getImageGRUrl($registry->getData('image_location'));
+} else {
+    $imageLocation = $link . '/Magenest_GiftRegistry/images/guest-view/time-location-default.jpg';
+}
+if ($registry->getData('image_joinus')) {
+    $imageJoinUs = $block->getImageGRUrl($registry->getData('image_joinus'));
+} else {
+    $imageJoinUs = $link . '/Magenest_GiftRegistry/images/guest-view/joinus-default.jpg';
+}
+$options = $block->jsonDecode($registry->getData('gift_options'));
+
+$additions_field = $eventTypeModel->getData('additions_field');
+$allAdditionalFields = [
+    'general_information' => [],
+    'registrant_information' => [],
+    'privacy' => [],
+    'shipping_address_information' => [],
+    'additional_section' => []
+];
+if ($additions_field != "") {
+    $aboutEvents = $block->jsonDecode($additions_field);
+    foreach ($aboutEvents as $field) {
+        if (!empty($field['group'])) {
+            $allAdditionalFields[$field['group']][] = $field;
+        }
+    }
+}
+
+if (!empty($options)) {
+    foreach ($options as $type => $option) {
+        if ($type == 'date') {
+            foreach ($option as $key => $value) {
+                $options[$type][$key] = date_create_from_format('m-d-Y', $value)->format('Y-m-d');
+            }
+        }
+    }
+}
+?>
+<!--Popup checkpass-->
+<?php if ($pass != null && $isCheckCustomer && $privacy == "private") {
+    ?>
+    <input type="hidden" id="password-temp" value="<?= $pass ?>">
+    <aside class="modal-popup prompt _show" data-role="modal" data-type="popup" tabindex="0"
+           style="z-index: 900;background: rgba(0,0,0,0.8);pointer-events: unset; display: none;">
+        <div data-role="focusable-start" tabindex="0"></div>
+        <div class="modal-inner-wrap"
+             style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);margin: 0;width: 700px;max-width: 90vw"
+             data-role="focusable-scope">
+            <header class="modal-header">
+                <h1 class="modal-title" data-role="title"><?= __('Please enter password to show gift') ?></h1>
+            </header>
+            <div class="modal-content" data-role="content">
+                <label for="prompt-field">
+                    <div><?= __('Password') ?></div>
+                </label>
+                <div class="prompt-message">
+                    <input data-role="promptField" id="prompt-field" class="admin__control-text" type="password"
+                           style="height: 40px"/>
+                    <div class="message-error"><?= __('Password not correct!') ?></div>
+                </div>
+            </div>
+            <footer class="modal-footer">
+                <button class="action-primary action-accept" type="button" data-role="action"
+                        style="background: #000;padding: 10px 25px;box-shadow: none;border: 0;color: #fff;border-radius: 0;">
+                    <span><?= __('OK') ?></span></button>
+            </footer>
+        </div>
+    </aside>
+    <?php
+} ?>
+<!--end popub checkpass-->
+<!--Popup login-->
+<div id="popupLogin" class="modal-address">
+    <!-- Modal content -->
+    <div class="modal-content-address">
+        <span class="close">&times;</span>
+        <a href="<?= $block->getLoginUrl() ?>">
+            <?= __('You must log in first!') ?>
+        </a>
+    </div>
+</div>
+<!--end pop up login-->
+<!--Popup add address-->
+<div id="popupAddress" class="modal-address">
+    <!-- Modal content -->
+    <div class="modal-content-address">
+        <span class="close">&times;</span>
+        <a href="<?= $block->getEditAddress() ?>">
+            <?= __('You must add an address first!') ?>
+        </a>
+    </div>
+</div>
+<!--end popup-->
+<!--Popup max qty-->
+<div id="popupQty" class="modal-address">
+    <!-- Modal content -->
+    <div class="modal-content-address">
+        <span class="close">&times;</span>
+        <?= __('We don\'t have enough product stock as you requested!') ?>
+        </a>
+    </div>
+</div>
+<div id="popupQtyMin" class="modal-address">
+    <!-- Modal content -->
+    <div class="modal-content-address">
+        <span class="close">&times;</span>
+        <?= __('Please enter a number greater than or equal to 1 in Qty field!') ?>
+        </a>
+    </div>
+</div>
+<!--End popup max qty-->
+<div class="giftregistry-banner" style="background-image: url(<?= $image ?>);">
+    <div class="giftregistry-content">
+        <h2 class="giftregistry-title">
+            <span>
+                <?= strlen($title) <= 100 ? $block->escapeHtml($title) : substr($block->escapeHtml($title), 0, 100) . '...'; ?>
+            </span>
+        </h2>
+    </div>
+</div>
+<div class="giftregistry-tabs" role="tablist" id="giftregistry_tabs">
+    <div class="tab-title">
+        <div class="giftregistry-tabtitle" data-role="collapsible"><?= __("Welcome Message") ?></div>
+        <div class="giftregistry-tabtitle" data-role="collapsible"><?= __("Gift List") ?></div>
+        <div class="giftregistry-tabtitle" data-role="collapsible"><?= __("Event Information") ?></div>
+    </div>
+    <div class="tab-content">
+        <div class="giftregistry-tabcontent welcome-block" data-role="content"
+             style="background-image: url('<?= $imageJoinUs ?>');">
+            <div class="block-giftregistry-content block-welcome-content">
+                <div class="welcome-title"><span><?= __('Welcome to our ' . $type); ?></span></div>
+                <div class="welcome-content">
+                    <div class="giftregistry-image">
+                        <img src="<?= $imageJoinUs ?>" alt=""/>
+                    </div>
+                    <div class="giftregistry-description">
+                        <div class="giftregistry-desc" style="padding-left: 0px">
+                            <?= html_entity_decode($registry->getData('description') ?? ''); ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="giftregistry-tabcontent giftlist-block" data-role="content"
+             data-bind="scope: 'giftregistry-tabcontent'">
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <script type="text/x-magento-init">
+                    {
+                        "*": {
+                            "Magento_Ui/js/core/app": {
+                                "components": {
+                                    "giftregistry-tabcontent": {
+                                        "component": "Magenest_GiftRegistry/js/giftregistry-tabcontent",
+                                        "config": {
+                                            "data": <?= $block->jsonEncode($items) ?>
+                                        },
+                                        "template" : "Magenest_GiftRegistry/seach"
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+
+            </script>
+        </div>
+        <div class="giftregistry-tabcontent eventinfo-block" data-role="content"
+             style="background-image: url('<?= $imageLocation ?>');">
+            <div class="block-giftregistry-content block-eventinfo-content">
+                <div class="column-left">
+                    <div class="eventinfo-box timelocation-box">
+                        <strong class="eventinfo-title"><?= __("Time & Location") ?></strong>
+                        <table>
+                            <tr>
+                                <th><?= __("Time") ?></th>
+                                <td><span><?= $registry->getData('date') ?></span></td>
+                            </tr>
+                            <tr>
+                                <th><?= __("Location") ?></th>
+                                <td><span><?= $block->escapeHtml($registry->getData('location')) ?></span></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="eventinfo-box remaining-box">
+                        <strong class="eventinfo-title"><?= __("Remaining Time") ?></strong>
+                        <div class="countdown-gift" id="countdown-gift"></div>
+                    </div>
+                </div>
+                <div class="column-right">
+                    <div class="eventinfo-box map-box">
+                        <iframe width="100%" height="400" frameborder="0" scrolling="no" marginheight="0"
+                                marginwidth="0"
+                                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDu5jiLFMwPF7s5-vbDr8YSe7R18erZ2dg&q=<?php
+                                echo !empty($registry->getData('location')) ? $block->escapeHtml($registry->getData('location')) : 'Viet+Nam';?>"></iframe>
+                    </div>
+                </div>
+                <div class="eventinfo-box contact-box">
+                    <strong class="eventinfo-title"><?= __("Contact info") ?></strong>
+                    <table>
+                        <tr>
+                            <th><?= __("Name") ?></th>
+                            <td>
+                                <span><?= $block->escapeHtml($registrant->getFirstname() . " " . $registrant->getLastname()) ?></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><?= __("Email") ?></th>
+                            <td><span><?= $block->escapeHtml($registrant->getData('email')) ?></span></td>
+                        </tr>
+                        <?php
+                        echo $block->getChildBlock('guest.view.registrant.field')
+                            ->setData('fields', $allAdditionalFields)
+                            ->setData('options', $options)->toHtml();
+                        ?>
+                    </table>
+                </div>
+                <?php
+                echo $block->getChildBlock('guest.view.addition.field')
+                    ->setData('fields', $allAdditionalFields)
+                    ->setData('options', $options)->toHtml();
+                ?>
+            </div>
+        </div>
+    </div>
+    <script type="text/x-magento-init">
+{
+    "*": {
+        "Magenest_GiftRegistry/js/giftregistry/view-gift":{
+            "registry": {
+                "year": "<?= $year ?>",
+                "month": "<?= $month ?>",
+                "date": "<?= $date ?>"
+            },
+            "cartUrl": "<?= $this->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true]) ?>",
+            "addUrl": "<?= $block->addToCart() ?>",
+            "formKey": "<?= $block->getFormKey() ?>",
+            "currentUrl": "<?= $block->getCurrentUrl(); ?>",
+            "checkpass": "<?= $block->getUrl('giftregistry/index/checkpass') ?>?isAjax=true"
+        }
+    }
+}
+
+
+
+    </script>
+    <script>
+        require([
+            'jquery',
+            'tabs'], function ($) {
+            $("#giftregistry_tabs").tabs();
+        });
+    </script>

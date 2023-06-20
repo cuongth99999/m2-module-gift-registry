@@ -1,0 +1,38 @@
+<div style="text-align: left; width: 200px;">
+    <input id="myInput" type="text" placeholder="Search..">
+</div> <br>
+<!-- ko if: divListItem() -->
+<div class="list-item-content" id="div-list-item">
+    <table class="data-grid" id="list-item" align-content="center">
+        <tr>
+            <th class="data-grid-th" data-bind="i18n: 'Image'"></th>
+            <th class="data-grid-th" data-bind="i18n: 'SKU'"></th>
+            <th class="data-grid-th" data-bind="i18n: 'Name'"></th>
+            <th class="data-grid-th" data-bind="i18n: 'Price'"></th>
+            <th class="data-grid-th" data-bind="i18n: 'Action'"></th>
+        </tr>
+        <tbody >
+        <!-- ko foreach: { data: productData, as: 'item' } -->
+        <tr>
+            <td data-bind="attr:{'data-th': $t('Image')}">
+                <img data-bind="attr:{src: product_img}" style="width: 100px; height: 100px"/>
+            </td>
+            <td data-bind="text: item.sku, attr:{'data-th': $t('SKU')}"></td>
+            <td data-bind="attr:{'data-th': $t('Name')}">
+                <a data-bind="text: item.name, attr: {href: item.product_url}" target="_blank"></a>
+            </td>
+            <td data-bind="text: item.price, attr:{'data-th': $t('Price')}"></td>
+            <td data-bind="attr:{'data-th': $t('Action')}">
+                <a style="text-decoration: none; cursor: pointer;"
+                   class="add-product"
+                   data-bind="attr: {href: item.pathname}">
+                    <i class="fa fa-gift" aria-hidden="true" style="font-size:20px"></i>
+                  <span data-bind="i18n: 'ADD TO GIFT REGISTRY'"></span>
+                </a>
+            </td>
+        </tr>
+        <!-- /ko -->
+        </tbody>
+    </table>
+</div>
+<!-- /ko -->

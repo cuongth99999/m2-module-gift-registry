@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * Copyright © 2015 Magenest. All rights reserved.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="index">
+        <job name="expired_gift_daily"
+             instance="Magenest\GiftRegistry\Model\Cron"
+             method="execute">
+            <schedule>0 0 * * *</schedule>
+        </job>
+        <job name="empty_gr_tmp_daily"
+             instance="Magenest\GiftRegistry\Model\Cron"
+             method="deleteGRTmp">
+            <schedule>0 0 * * *</schedule>
+        </job>
+    </group>
+</config>

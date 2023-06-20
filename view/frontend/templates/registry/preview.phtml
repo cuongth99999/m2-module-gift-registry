@@ -1,0 +1,203 @@
+<?php
+/** @var \Magenest\GiftRegistry\Block\Customer\Registry\Preview $block */
+$registry = $block->getRegistryTmp();
+$giftregistry = $block->getGiftRegistry($registry);
+$customer = $block->getCustomer($giftregistry);
+$year = substr($registry->getData('date'), 0, 4);
+$month = substr($registry->getData('date'), 5, 2)-1;
+$date = substr($registry->getData('date'), 8, 2)+1;
+$link = $block->getViewFileUrl('/');
+
+if ($registry->getData('image') != "") {
+    $image = $block->getImageGRUrl($registry->getData('image'));
+} else {
+    $image = $link . '/Magenest_GiftRegistry/images/guest-view/banner-default.jpg';
+}
+if ($registry->getData('image_location') != "") {
+    $imageLocation = $block->getImageGRUrl($registry->getData('image_location'));
+} else {
+    $imageLocation = $link . '/Magenest_GiftRegistry/images/guest-view/time-location-default.jpg';
+}
+if ($registry->getData('image_joinus')) {
+    $imageJoinUs = $block->getImageGRUrl($registry->getData('image_joinus'));
+} else {
+    $imageJoinUs = $link . '/Magenest_GiftRegistry/images/guest-view/joinus-default.jpg';
+}
+$items = $block->getGiftRegistryItem();
+$registry_date = $registry->getData('date');
+$registry_date = new DateTime($registry_date);
+$description = $registry->getData('description');
+$eventTypeModel = $block->getEventTypeModel();
+
+$options = $block->jsonDecode($registry->getData('gift_options'));
+$additions_field = $eventTypeModel->getData('additions_field');
+$allAdditionalFields = [
+    'general_information' => [],
+    'registrant_information' => [],
+    'privacy' => [],
+    'shipping_address_information' => [],
+    'additional_section' => []
+];
+if ($additions_field != "") {
+    $aboutEvents = $block->jsonDecode($additions_field);
+    foreach ($aboutEvents as $field)
+    {
+        if (isset($field['group']))
+        {
+            $allAdditionalFields[$field['group']][] = $field;
+        }
+    }
+}
+
+if(!empty($options)){
+    foreach ($options as $type => $option)
+    {
+        if ($type == 'date'){
+            foreach ($option as $key => $value)
+            {
+                $options[$type][$key] = date_create_from_format('m-d-Y', $value)->format('Y-m-d');
+            }
+        }
+    }
+}
+?>
+<div class="giftregistry-banner" style="background-image: url(<?= $image ?>);">
+    <div class="giftregistry-content">
+        <h2 class="giftregistry-title">
+            <span>
+                <?php if (strlen($registry->getData('title')) <= 100) {
+                    echo $block->escapeHtml($registry->getData('title'));
+                } else {
+                    echo substr($block->escapeHtml($registry->getData('title')), 0, 100) . '...';
+                } ?>
+            </span>
+        </h2>
+    </div>
+</div>
+<div class="giftregistry-tabs" role="tablist" id="giftregistry_tabs">
+  <div class="tab-title">
+    <div class="giftregistry-tabtitle" data-role="collapsible"><?= __("Welcome Message") ?></div>
+    <div class="giftregistry-tabtitle" data-role="collapsible"><?= __("Gift List") ?></div>
+    <div class="giftregistry-tabtitle" data-role="collapsible"><?= __("Event Information") ?></div>
+  </div>
+  <div class="tab-content">
+    <div class="giftregistry-tabcontent welcome-block" data-role="content"
+         style="background-image: url('<?= $imageJoinUs ?>');">
+      <div class="block-giftregistry-content block-welcome-content">
+        <div class="welcome-title"><span><?=  __('Welcome to our') . ' ' . $giftregistry->getData('type') ?></span>
+        </div>
+        <div class="welcome-content">
+          <div class="giftregistry-image">
+            <img src="<?= $imageJoinUs ?>" alt=""/>
+          </div>
+          <div class="giftregistry-description">
+            <div class="giftregistry">
+              <?php
+              $str = $block->filterOutputHtml($description);
+              echo html_entity_decode($str ?? '');
+              ?>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="giftregistry-tabcontent giftlist-block" data-role="content"
+         data-bind="scope: 'giftregistry-tabcontent'">
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <script type="text/x-magento-init">
+                    {
+                        "*": {
+                            "Magento_Ui/js/core/app": {
+                                "components": {
+                                    "giftregistry-tabcontent": {
+                                        "component": "Magenest_GiftRegistry/js/giftregistry-tabcontent",
+                                        "config": {
+                                            "data": <?= $block->jsonEncode($items) ?>
+                                        },
+                                        "template" : "Magenest_GiftRegistry/seach"
+                                    }
+                                }
+                            }
+                        }
+                    }
+        </script>
+    </div>
+    <div class="giftregistry-tabcontent eventinfo-block" data-role="content" style="background-image: url('<?= $imageLocation ?>');">
+        <div class="block-giftregistry-content block-eventinfo-content">
+            <div class="column-left">
+                <div class="eventinfo-box timelocation-box">
+                    <strong class="eventinfo-title"><?= __("Time & Location") ?></strong>
+                    <table>
+                        <tr>
+                            <th><?= __("Time") ?></th>
+                            <td><span><?=  $registry->getData('date') ?></span></td>
+                        </tr>
+                        <tr>
+                            <th><?= __("Location") ?></th>
+                            <td><span><?=  $block->escapeHtml($registry->getData('location')) ?></span></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="eventinfo-box remaining-box">
+                    <strong class="eventinfo-title"><?= __("Remaining Time") ?></strong>
+                    <div class="countdown-gift" id="countdown-gift"></div>
+                </div>
+            </div>
+            <div class="column-right">
+                <div class="eventinfo-box map-box">
+                    <iframe width="100%" height="400" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+                            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDu5jiLFMwPF7s5-vbDr8YSe7R18erZ2dg&q=<?php
+                            echo !empty($registry->getData('location')) ? $block->escapeHtml($registry->getData('location')) : 'Viet+Nam';?>">"></iframe>
+                </div>
+            </div>
+            <div class="eventinfo-box contact-box">
+                <strong class="eventinfo-title"><?= __("Contact info") ?></strong>
+                <table>
+                    <tr>
+                        <th><?= __('Name')?></th>
+                        <td><span><?=  $block->escapeHtml( $customer->getFirstname(). " " . $customer->getLastname()) ?></span></td>
+                    </tr>
+                    <tr>
+                        <th><?= __('Email')?></th>
+                        <td><span><?=  $block->escapeHtml($registry->getData('registrant_email')) ?></span></td>
+                    </tr>
+                    <?php
+                    echo $block->getChildBlock('preview.view.registrant.field')
+                        ->setData('fields', $allAdditionalFields)
+                        ->setData('options', $options)->toHtml();
+                    ?>
+                </table>
+            </div>
+            <?php
+            echo $block->getChildBlock('preview.addition.field')
+                ->setData('fields', $allAdditionalFields)
+                ->setData('options', $options)->toHtml();
+            ?>
+        </div>
+    </div>
+</div>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magenest_GiftRegistry/js/giftregistry/view-gift":{
+                "registry": {
+                    "year": "<?=  $year ?>",
+                    "month": "<?=  $month ?>",
+                    "date": "<?=  $date ?>"
+                },
+                "cartUrl": "<?=  $this->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true]) ?>",
+                "addUrl": "<?=  $block->addToCart() ?>",
+                "formKey": "<?=  $block->getFormKey()  ?>",
+                "checkpass": "<?=  $block->getUrl('giftregistry/index/checkpass')?>?isAjax=true"
+            }
+        }
+    }
+</script>
+<script>
+    require([
+        'jquery',
+        'tabs'], function ($) {
+        $("#giftregistry_tabs").tabs();
+    });
+</script>

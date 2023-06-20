@@ -1,0 +1,83 @@
+<?php
+/** @var \Magenest\GiftRegistry\Block\Adminhtml\Type\Edit\Tab\Fields $block */
+$data = $block->getData('event_type');
+$field = isset($data['fields']) && $data['fields'] != null ? $data['fields'] : [];
+$abouteventblock     = $block->getData('field-section');
+?>
+<style>
+    #additions_field td, #additions_field th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    #base_fieldset .checkbox{
+        width: 16px;
+        height: 16px;
+        position: relative;
+        border: 1px solid #666;
+    }
+    #base_fieldset .checkbox:before{
+        content: '\f00c';
+        font-family: FontAwesome;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        -o-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+    .admin__scope-old .form-inline .label~.control{
+        margin: 8px 0;
+    }
+</style>
+<fieldset class="fieldset admin__fieldset " id="base_fieldset">
+    <legend class="admin__legend legend">
+        <span><?= __('Default Sections');?></span>
+    </legend>
+    <div class='admin__field field'>
+        <label class='label admin__field-label' for='general_info'><span><?=__('General Information')?></span></label>
+        <div class='admin__field-control control'>
+            <div class="checkbox general_info"></div>
+        </div>
+    </div>
+    <div class='admin__field field'>
+        <label class='label admin__field-label' for='registrant_info'><span><?=__('Registrant Information')?></span></label>
+        <div class='admin__field-control control'>
+            <div class="checkbox registrant-info"></div>
+        </div>
+    </div>
+    <div class='admin__field field'>
+        <label class='label admin__field-label' for='privacy'><span><?=__('Privacy')?></span></label>
+        <div class='admin__field-control control'>
+            <div class="checkbox privacy"></div>
+        </div>
+    </div>
+    <div class='admin__field field'>
+        <label class='label admin__field-label' for='shipping_address_info'><span><?=__('Shipping Address Information')?></span></label>
+        <div class='admin__field-control control'>
+            <div class="checkbox shipping-address-info"></div>
+        </div>
+    </div>
+</fieldset>
+<fieldset class="fieldset admin__fieldset " id="about_event">
+    <legend class="admin__legend legend">
+        <span><?=__('Additional Sections')?></span>
+    </legend>
+    <div class='admin__field field'>
+        <label class='label admin__field-label' for='about_event'><span><?=__('Enable')?></span></label>
+        <div class='admin__field-control control'>
+            <input <?php if(in_array('about_event',$field)): echo 'checked'; endif;  ?> name='field[]' value='about_event' title='About Event' type='checkbox' aria-required='true'>
+        </div>
+    </div>
+    <div class='admin__field field' id="giftregistry_aboutevent" data-bind="scope:'giftregistry_aboutevent'">
+        <!-- ko template: 'Magenest_GiftRegistry/eventtype/aboutevent' --><!-- /ko -->
+        <script type="text/x-magento-init">
+            {
+                "*":{
+                    "Magento_Ui/js/core/app": <?= $abouteventblock->getAboutEvent(); ?>
+                }
+            }
+        </script>
+    </div>
+</fieldset>

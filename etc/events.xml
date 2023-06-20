@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magenest. All rights reserved.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_save_after">
+        <observer name="giftregistry_observer_order" instance="Magenest\GiftRegistry\Observer\Order\Order"/>
+    </event>
+    <event name="sales_order_item_save_after">
+        <observer name="giftregistry_observer_order_item" instance="Magenest\GiftRegistry\Observer\Order\Item"/>
+    </event>
+    <!--<event name="sales_order_item_save_after">-->
+        <!--<observer name="giftregistry_observer_cancel_order_item" instance="Magenest\GiftRegistry\Observer\Order\Item"/>-->
+    <!--</event>-->
+    <!--<event name="sales_order_creditmemo_save_after">-->
+        <!--<observer name="refund_giftregistry" instance="Magenest\GiftRegistry\Observer\Order\Creditmemo" />-->
+    <!--</event>-->
+    <event name="gift_registry_save_commit_after">
+        <observer name="save_update_time" instance="Magenest\GiftRegistry\Observer\GiftRegistry\Save\UpdateTime" />
+    </event>
+    <event name="sales_order_place_before">
+        <observer name="validate_expired_event" instance="Magenest\GiftRegistry\Observer\Order\ValidateCheckout"/>
+    </event>
+    <!--<event name="catalog_product_type_prepare_full_options">-->
+        <!--<observer name="giftregistry_observer_cart_add" instance="Magenest\GiftRegistry\Observer\Cart\Add" />-->
+    <!--</event>-->
+    <event name="checkout_cart_update_items_before">
+        <observer name="validation_qty_gift" instance="Magenest\GiftRegistry\Observer\Cart\UpdatePost"/>
+    </event>
+    <event name="checkout_cart_save_before">
+        <observer name="validation_item_gift" instance="Magenest\GiftRegistry\Observer\Cart\Save"/>
+    </event>
+
+    <!-- Regular Checkout -->
+    <event name="checkout_submit_all_after">
+        <observer name="magenest_checkout_submit_all_after" instance="Magenest\GiftRegistry\Observer\Order\ProcessOrder" />
+    </event>
+
+    <!-- Paypal Express Checkout -->
+    <event name="paypal_express_place_order_success">
+        <observer name="magenest_process_paypal_order" instance="Magenest\GiftRegistry\Observer\Order\ProcessOrder" />
+    </event>
+</config>

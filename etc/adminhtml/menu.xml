@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Magenest_GiftRegistry::giftregistry" dependsOnModule="Magenest_GiftRegistry" title="Gift Registry" module="Magenest_GiftRegistry" sortOrder="60"   resource="Magenest_GiftRegistry::giftregistry"/>
+        <add id="Magenest_GiftRegistry::manager" title="Gift Registries" module="Magenest_GiftRegistry" sortOrder="10" parent="Magenest_GiftRegistry::giftregistry" action="giftregistry/registry/index" resource="Magenest_GiftRegistry::manager"/>
+        <add id="Magenest_GiftRegistry::type" title="Event Types" module="Magenest_GiftRegistry" sortOrder="20" parent="Magenest_GiftRegistry::giftregistry" action="giftregistry/type/index" resource="Magenest_GiftRegistry::type"/>
+        <add id="Magenest_GiftRegistry::order" title="Gift Registry Orders" module="Magenest_GiftRegistry" sortOrder="30" parent="Magenest_GiftRegistry::giftregistry" action="giftregistry/transaction/index" resource="Magenest_GiftRegistry::order"/>
+        <add id="Magenest_GiftRegistry::setting" title="Settings" module="Magenest_GiftRegistry" sortOrder="40" parent="Magenest_GiftRegistry::giftregistry" action="adminhtml/system_config/edit/section/giftregistry" resource="Magenest_GiftRegistry::setting"/>
+    </menu>
+</config>

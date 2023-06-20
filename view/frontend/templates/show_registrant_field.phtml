@@ -1,0 +1,17 @@
+<?php
+$fields = $block->getData('fields');
+$options = $block->getData('options');
+
+if (!empty($options)){
+    foreach ($fields['registrant_information'] as $field)
+    {
+        ?>
+        <tr>
+            <?php if (isset($field['type']) && isset($field['id']) && isset($options[$field['type']][$field['id']]) && $options[$field['type']][$field['id']] !='') { ?>
+                <th><?=$block->escapeHtml($field['label'])?></th>
+                <td><span><?= $block->escapeHtml($options[$field['type']][$field['id']]) ?></span></td>
+            <?php } ?>
+        </tr>
+        <?php
+    }
+}?>

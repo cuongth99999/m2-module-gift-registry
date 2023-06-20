@@ -1,0 +1,46 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/* @var $block \Magento\Wishlist\Block\Customer\Wishlist\Item\Column\Cart */
+/* @var \Magento\Wishlist\Model\Item $item */
+$item = $block->getItem();
+$product = $item->getProduct();
+?>
+<?php foreach ($block->getChildNames() as $childName): ?>
+    <?= $block->getLayout()->renderElement($childName, false); ?>
+<?php endforeach;?>
+<div class="box-tocart">
+    <fieldset class="fieldset">
+        <?php if ($item->canHaveQty() && $product->isVisibleInSiteVisibility()): ?>
+            <div class="field qty">
+                <label class="label" for="qty[<?= $item->getId() ?>]"><span><?= __('Qty') ?></span></label>
+                <div class="control">
+                    <input type="number" data-role="qty" id="qty[<?= $item->getId() ?>]" class="input-text qty" data-validate="{'required-number':true,'validate-greater-than-zero':true}"
+                           name="qty[<?= $item->getId() ?>]" value="<?= $block->getAddToCartQty($item) * 1 ?>">
+                </div>
+            </div>
+        <?php endif; ?>
+        <?php if ($product->isSaleable()): ?>
+            <div class="product-item-actions">
+                <div class="actions-primary">
+                    <button type="button" data-role="tocart" data-post='<?= $block->getItemAddToCartParams($item)?>' title="<?= __('Add to Cart') ?>" data-item-id="<?= $item->getId()?>" class="action tocart primary">
+                        <span><?= __('Add to Cart') ?></span>
+                    </button>
+                </div>
+            </div>
+        <?php else: ?>
+            <?php if ($product->getIsSalable()): ?>
+                <p class="available stock" title="<?= __('Availability') ?>">
+                    <span><?= __('In stock') ?></span>
+                </p>
+            <?php else: ?>
+                <p class="unavailable stock" title="<?= __('Availability') ?>">
+                    <span><?= __('Out of stock') ?></span>
+                </p>
+            <?php endif; ?>
+        <?php endif; ?>
+    </fieldset>
+</div>

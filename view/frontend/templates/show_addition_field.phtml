@@ -1,0 +1,33 @@
+<?php
+    $options = $block->getData('options');
+if (!empty($options)) {
+    $fields = $block->getData('fields');
+    if (!empty($fields['additional_section'])) {
+        ?>
+<div class="eventinfo-box contact-box additional_section">
+    <strong class="eventinfo-title"><?= __("Addition Info") ?></strong>
+    <table>
+        <?php foreach ($fields['additional_section'] as $field) { ?>
+                <?php if (isset($field['type']) && isset($field['id']) && isset($options[$field['type']][$field['id']]) && $options[$field['type']][$field['id']] !='') { ?>
+                    <tr>
+                        <th><?= $block->escapeHtml($field['label'])?></th>
+                        <td><span><?= $block->escapeHtml($options[$field['type']][$field['id']]) ?></span></td>
+                        <input id="check_additional_section" hidden>
+                    </tr>
+                <?php } ?>
+        <?php } ?>
+    </table>
+</div>
+<?php
+    }
+}
+?>
+<script>
+    require([
+        'jquery',
+    ], function($) {
+        if($('#check_additional_section').length === 0){
+            $('.additional_section').remove();
+        }
+    });
+</script>

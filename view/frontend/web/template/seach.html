@@ -1,0 +1,87 @@
+<div class="block-giftregistry-content block-giftlist-content">
+    <div class="giftlist-filter">
+        <div class="filter-options">
+
+            <select class="gr-filter sorting" name="sorting">
+                <option value="default" data-bind="i18n: 'Default Sorting'"></option>
+                <option value="qty" data-bind="i18n: 'Sort by desired quantity'"></option>
+                <option value="priority" data-bind="i18n: 'Sort by priority'"></option>
+            </select>
+            <select class="gr-filter value" name="value">
+                <option value="high" data-bind="i18n: 'High to Low'"></option>
+                <option value="low" data-bind="i18n: 'Low to High'"></option>
+            </select>
+
+        </div>
+        <div class="gr-filter-actions">
+            <div class="filter-action">
+                <button class="filter" id="sort-gr-item-submit" data-bind="click: $data.clickSort, i18n: 'Sort now'"></button>
+            </div>
+        </div>
+    </div>
+    <div class="gift-item-table">
+        <div class="box-container">
+            <table id="registry-list">
+                <thead>
+                <tr>
+                    <th data-bind="i18n: 'Product Image'"></th>
+                    <th data-bind="i18n: 'Product Name'"></th>
+                    <th data-bind="i18n: 'Price'"></th>
+                    <th data-bind="i18n: 'Desired Qty'"></th>
+                    <th data-bind="i18n: 'Priority'"></th>
+                    <th data-bind="i18n: 'Quantity'"></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- ko foreach: { data: giftregistries, as: 'item' } -->
+                <tr>
+                    <td class="product-image" data-th="Product Image">
+                        <img data-bind="attr:{src: productImage}"/>
+                    </td>
+                    <td data-bind="attr:{'data-th': $t('Product Name')}" >
+                        <p>
+                            <a data-bind="text: item.product_name, attr: {href: item.urlProduct}"></a>
+                            <br>
+                            <b data-bind="visible: item.size">Size: </b><span data-bind="text: item.size"></span>
+                            <br>
+                            <b data-bind="visible: item.color">Color: </b><span data-bind="text: item.color"></span>
+                        </p>
+                    </td>
+                    <td data-bind="text: item.price, attr:{'data-th': $t('Price')}"></td>
+                    <td data-bind="text: item.qty, attr:{'data-th': $t('Desired Qty')}"></td>
+                    <td data-bind="attr:{'data-th': $t('Priority')}">
+                        <div class='rating-stars text-center' style="line-height: 10px">
+                            <ul id='stars' data-role='adjust-select' data-bind="foreach: item.starRate">
+                                <li class="star" data-bind="css: starSelected">
+                                    <i class='fa'>★</i>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td data-bind="attr:{'data-th': $t('Quantity')}">
+                        <div class="qty-box">
+                            <!-- ko if: item.displayQtyMode() == '1' -->
+                            <input style="max-width: 100px" placeholder="Qty" type="text" value="1"
+                                   name="qty" min="1" data-bind="attr: {id: item.gift_item_id}">
+                            <!--/ko-->
+
+                            <!-- ko if: item.displayQtyMode() == "0" -->
+                            <select data-bind="options: item.option, attr: {id: item.gift_item_id}">
+                            </select>
+                            <!--/ko-->
+                        </div>
+                    </td>
+                    <td class="registry-action">
+                        <div style="color: white;" class="add-to-cart btn" name="add-to-cart" data-role="add-to-cart"
+                             data-bind="click: $data.addToCart">
+                            Add to cart
+                        </div>
+                    </td>
+                </tr>
+                <!-- /ko -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

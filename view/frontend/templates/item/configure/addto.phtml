@@ -1,0 +1,109 @@
+<?php /** @var Magenest\GiftRegistry\Block\Product\View $block */
+$actionAddUrl = $block->getUrl(
+    'gift_registry/index/checkproductsdetail',
+    [
+        'productId' => $block->getProduct()->getId()
+    ]
+);
+$checkItemUrl = $block->getUrl(
+    'gift_registry/index/checkGRItem',
+    [
+        'productId' => $block->getProduct()->getId()
+    ]
+);
+$checkSetPriority = $block->getUrl(
+    'gift_registry/index/checkSetPriority',
+    [
+        'productId' => $block->getProduct()->getId()
+    ]
+);
+$collections = $block->checkProductInGiftRegistry();
+$currentUrl = $block->getCurrentUrl();
+$product = $block->getProduct();
+?>
+<div class="add-to-gift-registry-action">
+    <input type='hidden' value="<?= $product->getEntityId() ?>" id="giftregistry_product_id">
+    <div class="add-to-gift-registry action-gift-registry" data-role="add-to-links">
+        <a href="#"
+           style="text-decoration: none"
+           data-product-id = "<?=$block->getProduct()->getId()?>"
+           id="add-gift-link"
+           data-action="add-gift-registry"
+           data-product-url="<?= $block->getProduct()->getProductUrl() ?>"
+           title="<?= $block->escapeHtml(__('Add to gift registry')); ?>"
+           role="button">
+            <i class="fa fa-gift" aria-hidden="true" style="font-size:20px"></i>
+            <span><?= __('Add to Gift registry') ?></span>
+        </a>
+    </div>
+    <div id="remove-gift-registry" data-bind="scope:'remove-gift-registry'" style="float: left;">
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <script type="text/x-magento-init">
+            {
+                "*": {
+                    "Magento_Ui/js/core/app": {
+                        "components": {
+                            "remove-gift-registry": {
+                                "component": "Magenest_GiftRegistry/js/view/productdetail/remove-gift-registry",
+                                "template" : "Magenest_GiftRegistry/productdetail/removebutton",
+                                "options" : {
+                                    "check_item_url" : "<?= $checkItemUrl; ?>"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        </script>
+    </div>
+    <div id="set-priority-gift-registry" data-bind="scope:'set-priority-gift-registry'">
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <script type="text/x-magento-init">
+            {
+                "*": {
+                    "Magento_Ui/js/core/app": {
+                        "components": {
+                            "set-priority-gift-registry": {
+                                "component": "Magenest_GiftRegistry/js/view/productdetail/set-priority-gift-registry",
+                                "template" : "Magenest_GiftRegistry/productdetail/setpriority",
+                                "options" : {
+                                    "check_item_url" : "<?= $checkSetPriority; ?>"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        </script>
+    </div>
+    <div id="add-giftregistry-table" class="giftregistry-table" data-role="giftregistry-table" style="display: none">
+        <div class="giftregistry-modal">
+            <div id="giftregistry-message-error" class="message-error message" ></div>
+            <div class="giftregistry-modal-content">
+                <div class="giftregistry-close"><i class="fa fa-times" aria-hidden="true"></i>
+                </div>
+                <div class="giftregistry-title">
+                    <i class="fa fa-gift" aria-hidden="true"></i>
+                    <?= __('Please choose a Gift Registry Event for the selected product: ') ?>
+                </div>
+                <div class="giftregistry-list">
+                    <div id="list-gift" class="list-gift">
+                    </div>
+                </div>
+                <div class="giftregistry-action">
+                    <button id="add-gift-button" type="button" class="add-gift-button gift-button"><?= __('Add')?></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magenest_GiftRegistry/js/view/productdetail/add-to-giftregistry": {
+                "actionAddUrl" : "<?= $actionAddUrl; ?>"
+            }
+        }
+    }
+</script>

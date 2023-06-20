@@ -1,0 +1,31 @@
+<!-- ko if: isForRegistry -->
+<div class="fieldset giftregistry-information">
+    <div class="step-title" data-role="title" data-bind="i18n: 'Gift Registry Additional Information'">Gift Registry Additional Information</div>
+    <table>
+        <tr>
+            <td>
+                <label data-role="title" data-bind="i18n: 'Add a message to your friends'">Add a message to your friends</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <textarea name="gr-guest-message"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Give an anonymous gift</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <select id="checkbox" name="checkbox">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<!-- /ko -->

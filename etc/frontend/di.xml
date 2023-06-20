@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Customer\Controller\Account\CreatePost">
+        <plugin name="redirect_after_create_account" type="Magenest\GiftRegistry\Plugin\Customer\Account\CreatePost" sortOrder="1"/>
+    </type>
+    <type name="Magento\Customer\Controller\Account\LoginPost">
+        <plugin name="redirect_after_log_in" type="Magenest\GiftRegistry\Plugin\Customer\Account\LoginPost" sortOrder="2"/>
+    </type>
+    <type name="Magento\Framework\App\RouterList">
+        <arguments>
+            <argument name="routerList" xsi:type="array">
+                <item name="giftregistrys_custom_router" xsi:type="array">
+                    <item name="class" xsi:type="string">Magenest\GiftRegistry\Controller\Router</item>
+                    <item name="disable" xsi:type="boolean">false</item>
+                    <item name="sortOrder" xsi:type="string">60</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magenest\GiftRegistry\Block\Customer\Registry\Preview">
+        <arguments>
+            <argument name="templateProcessor" xsi:type="object">Magento\Widget\Model\Template\Filter</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Checkout\Block\Onepage">
+        <arguments>
+            <argument name="layoutProcessors" xsi:type="array">
+                <item name="gift_registry" xsi:type="object">\Magenest\GiftRegistry\Block\LayoutProcessor\Checkout\GiftRegistryProcessors</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

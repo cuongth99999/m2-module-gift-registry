@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="magenest" translate="label" sortOrder="200">
+            <label>Magenest</label>
+        </tab>
+        <section id="giftregistry" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Gift Registry Configuration</label>
+            <tab>magenest</tab>
+            <resource>Magenest_GiftRegistry::config_giftregistry</resource>
+            <group id="general" translate="label" sortOrder="1" showInDefault="1" showInStore="1" showInWebsite="1">
+                <label>General</label>
+                <field id="enable" type="select" sortOrder="1" translate="label comment" showInWebsite="1" showInStore="1" showInDefault="1">
+                    <label>Enable Extension</label>
+                    <comment>Enables or disables extension.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <backend_model>Magenest\GiftRegistry\Model\Config\Backend\General\Enable</backend_model>
+                </field>
+                <field id="hide_empty_event_type" type="select" sortOrder="1" translate="label" showInWebsite="1" showInStore="1" showInDefault="1">
+                    <label>Hide empty event type</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="giftregistry/general/enable">1</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="email" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Email Template</label>
+                <depends>
+                    <field id="giftregistry/general/enable">1</field>
+                </depends>
+                <field id="sender" translate="label comment" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Sender</label>
+                    <comment>Choose the email address that the emails will be sent from.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                </field>
+                <field id="email_template_share_email" translate="label comment" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Gift Sharing Email Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>
+                <field id="template" translate="label comment" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Gift Order Notification Email Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>
+                <field id="gift_confirmation_email_form" translate="label comment" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Gift Order Confirmation Email Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>
+                <field id="thank_you_email_form" translate="label comment" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Thank You Email Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>
+            </group>
+            <group id="setting" translate="label" sortOrder="6" showInDefault="1" showInStore="1" showInWebsite="1">
+                <label>Settings</label>
+                <depends>
+                    <field id="giftregistry/general/enable">1</field>
+                </depends>
+                <field id="banner_default" type="image" sortOrder="3" translate="label" showInWebsite="1" showInStore="1" showInDefault="1">
+                    <label>Background Image for Gift Registry Search Page</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Image</backend_model>
+                    <upload_dir config="system/filesystem/media" scope_info="1">giftregistry</upload_dir>
+                    <base_url type="media" scope_info="1">giftregistry</base_url>
+                    <comment><![CDATA[You must upload image with size <= 2M<br />If empty, default will be used.<br />(jpg, jpeg, gif, png) ]]></comment>
+                </field>
+                <field id="desired_quantity" translate="label comment" type="select" sortOrder="4" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>Item Quantity display as</label>
+                    <source_model>Magenest\GiftRegistry\Model\Config\System\Setting\DesiredQuantity</source_model>
+                    <comment><![CDATA[<ul><li>Drop-down: guest can select a value equal or lower desired qty</li>
+                        <li>Text box: guest can input any qty</li></ul>]]></comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

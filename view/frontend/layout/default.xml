@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+  <head>
+    <css src="Magenest_GiftRegistry/css/font-awesome.css" />
+  </head>
+  <body>
+        <referenceContainer name="product.info.main">
+            <block class="Magenest\GiftRegistry\Block\Product\View" name="product.info.additem" as="additem"
+                   ifconfig="giftregistry/general/enable" template="Magenest_GiftRegistry::item/configure/addto.phtml" after="-"/>
+        </referenceContainer>
+
+        <referenceContainer name="content">
+            <block class="Magento\Cookie\Block\RequireCookie" name="require-cookie" template="Magento_Cookie::require_cookie.phtml">
+                <arguments>
+                    <argument name="triggers" xsi:type="array">
+                        <item name="addToGiftRegistryLink" xsi:type="string">.action.togiftregistry</item>
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

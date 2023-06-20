@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="editor"/>
+    <body>
+        <referenceContainer name="content">
+            <block class="Magenest\GiftRegistry\Block\Adminhtml\Registry\Edit" name="giftregistry_registry_edit"/>
+        </referenceContainer>
+        <referenceContainer name="left">
+            <block class="Magenest\GiftRegistry\Block\Adminhtml\Registry\Edit\Tabs" name="registry_edit_tabs">
+                <block class="Magenest\GiftRegistry\Block\Adminhtml\Registry\Edit\Tab\Main" name="registry_edit_tab_main"/>
+                <block class="Magenest\GiftRegistry\Block\Adminhtml\Registry\Edit\Tab\Information" name="registry_edit_tab_information"/>
+                <block class="Magenest\GiftRegistry\Block\Adminhtml\Registry\Edit\Tab\Items" name="registry_edit_tab_items"/>
+                <block class="Magenest\GiftRegistry\Block\Adminhtml\Registry\Edit\Tab\Privacy" name="registry_edit_tab_privacy"/>
+                <block class="Magenest\GiftRegistry\Block\Adminhtml\Registry\Edit\Tab\ShippingAddressInformation" name="registry_edit_tab_shipping_address_information"/>
+                <block class="Magenest\GiftRegistry\Block\Adminhtml\Registry\Edit\Tab\AdditionInformation" name="registry_edit_tab_addition_information"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">giftregistry_registry_tabs</argument>
+                    <argument name="block" xsi:type="string">registry_edit_tab_main</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">giftregistry_registry_tabs_information</argument>
+                    <argument name="block" xsi:type="string">registry_edit_tab_information</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">giftregistry_registry_tabs_items</argument>
+                    <argument name="block" xsi:type="string">registry_edit_tab_items</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">giftregistry_registry_tabs_privacy</argument>
+                    <argument name="block" xsi:type="string">registry_edit_tab_privacy</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">giftregistry_registry_tabs_shipping_address_information</argument>
+                    <argument name="block" xsi:type="string">registry_edit_tab_shipping_address_information</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">giftregistry_registry_tabs_addition_information</argument>
+                    <argument name="block" xsi:type="string">registry_edit_tab_addition_information</argument>
+                </action>
+            </block>
+        </referenceContainer>
+    </body>
+</page>
