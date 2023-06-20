@@ -151,6 +151,7 @@ class ProcessOrder implements ObserverInterface
                     $orderRegistryModel = $this->_orderRegistryFactory->create();
                     $this->_orderRegistryResource->load($orderRegistryModel, $quoteId, 'quote_id');
                     $params['message'] = $orderRegistryModel->getData('message');
+                    $params['sender'] = $orderRegistryModel->getData('sender');
                     $params['incognito'] = $orderRegistryModel->getData('incognito');
                     //Gift confirmation email
                     $registry->sendEmail($order, null, $registrant);

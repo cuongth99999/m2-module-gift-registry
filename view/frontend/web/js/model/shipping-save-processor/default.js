@@ -76,10 +76,12 @@ define([
             quote.giftregistry = [];
             quote.giftregistry.message = $('[name="gr-guest-message"]').val();
             quote.giftregistry.checkbox = $('[name="checkbox"]').val();
+            quote.giftregistry.sender = $('[name="sender"]').val();
 
             var giftregistryData = {
                 giftregistry_message: quote.giftregistry.message,
-                giftregistry_checkbox: quote.giftregistry.checkbox
+                giftregistry_checkbox: quote.giftregistry.checkbox,
+                giftregistry_sender: quote.giftregistry.sender
             };
 
             if (!payload.addressInformation.hasOwnProperty('extension_attributes')) {

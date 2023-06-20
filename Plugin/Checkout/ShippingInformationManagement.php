@@ -80,6 +80,8 @@ class ShippingInformationManagement
                 $extAttributes = $address->getExtensionAttributes();
                 $giftregistryMessage = $extAttributes->getGiftregistryMessage();
                 $giftRegistryCheckbox = $extAttributes->getGiftregistryCheckbox();
+                $giftRegistrySender = $extAttributes->getGiftregistrySender();
+
                 /** @var Quote $quote */
                 $quote = $this->_quoteRepository->getActive($cartId);
                 $quoteId = $quote->getId();
@@ -88,6 +90,7 @@ class ShippingInformationManagement
                 $tranModel->addData([
                     'giftregistry_id' => $giftregistryId,
                     'message' => $giftregistryMessage,
+                    'sender' => $giftRegistrySender,
                     'quote_id' => $quoteId,
                     'incognito' => $giftRegistryCheckbox
                 ]);

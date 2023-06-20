@@ -1,6 +1,7 @@
 <!-- ko if: (isModuleEnabled()) -->
 <div class="gr-guest-message-info">
-    <!-- ko if: (getGRGuestMessage()) -->
+    <!-- ko if: (getGRGuestMessage() && getSenderName()) -->
+    Sender Name: <span class="value" data-bind="text: getSenderName()"></span><br/>
     Message send to your friend: <span class="value" data-bind="text: getGRGuestMessage()"></span><br/>
     <!--/ko-->
 </div>

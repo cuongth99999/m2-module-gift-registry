@@ -202,6 +202,15 @@ class UpgradeGiftRegistrySchema implements DataPatchInterface, PatchVersionInter
         );
         $setup->getConnection()->addColumn(
             $table,
+            'sender',
+            [
+                'type' => Table::TYPE_TEXT,
+                'nullable' => true,
+                'comment' => 'sender'
+            ]
+        );
+        $setup->getConnection()->addColumn(
+            $table,
             'quote_id',
             [
                 'type' => Table::TYPE_TEXT,

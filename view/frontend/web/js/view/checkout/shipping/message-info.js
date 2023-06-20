@@ -21,6 +21,17 @@ define([
             }
             return false;
         },
+        getSenderName: function() {
+            var shippingAddress = quote.shippingAddress();
+            if (shippingAddress['extension_attributes'] !== undefined) {
+                var extensionAttributes = shippingAddress['extension_attributes'];
+                if(extensionAttributes.giftregistry_sender !== undefined && extensionAttributes.giftregistry_sender !== ""){
+                    var sender = extensionAttributes.giftregistry_sender;
+                    return sender;
+                }
+            }
+            return false;
+        },
         isModuleEnabled: function () {
             this.isForRegistry = ko.observable(true);
             return this;

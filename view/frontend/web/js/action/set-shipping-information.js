@@ -9,7 +9,8 @@ define([
             var shippingAddress = quote.shippingAddress();
             var message = $('[name="gr-guest-message"]').val();
             var checkbox = $('[name="checkbox"]').val();
-            shippingAddress['extension_attributes'] = {'giftregistry_message':message, 'giftregistry_checkbox':checkbox};
+            var sender = $('[name="sender"]').val();
+            shippingAddress['extension_attributes'] = {'giftregistry_message':message, 'giftregistry_checkbox':checkbox, 'giftregistry_sender':sender};
             return originalAction();
         })
     }
