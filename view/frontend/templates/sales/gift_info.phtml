@@ -1,0 +1,20 @@
+<?php
+/**
+ * @var $block \Magenest\GiftRegistry\Block\Adminhtml\Sales\GiftInfo
+ */
+
+$order_id = $block->getOrder()->getData('entity_id');
+$message = $block->getMessage($order_id);
+$senderName = $block->getSenderName($order_id);
+?>
+
+<div class="box box-order-billing-method">
+    <strong class="box-title">
+        <span><?= $block->escapeHtml(__('Giftregistry Information')) ?></span>
+    </strong>
+    <div class="box-content">
+        <span class="">Sender Name: <?= $senderName; ?></span><br>
+        <span class="">Message: <?= $message; ?></span>
+    </div>
+</div>
+

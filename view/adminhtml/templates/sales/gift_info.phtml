@@ -5,6 +5,7 @@
 
 $order_id = $block->getOrder()->getData('entity_id');
 $message = $block->getMessage($order_id);
+$senderName = $block->getSenderName($order_id);
 ?>
 <section class="admin__page-section order-addresses">
     <div class="admin__page-section-title">
@@ -13,7 +14,7 @@ $message = $block->getMessage($order_id);
     <div class="admin__page-section-content">
         <div class="admin__page-section-item order-billing-address">
             <div class="admin__page-section-item-title">
-                <span class="">Sender Name: Name</span><br>
+                <span class="">Sender Name: <?= $senderName; ?></span><br>
                 <span class="">Message: <?= $message; ?></span>
             </div>
         </div>

@@ -70,4 +70,11 @@ class GiftInfo extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
         $dataMessage = $message->getData()[0]['message'];
         return $dataMessage;
     }
+
+    public function getSenderName($order_id) {
+        $sender = $this->collectioFactory->create();
+        $sender->addFieldToFilter('order_id', ['eq'=>$order_id]);
+        $senderName = $sender->getData()[0]['sender'];
+        return $senderName;
+    }
 }

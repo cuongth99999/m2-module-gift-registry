@@ -3,5 +3,6 @@
     <extension_attributes for="Magento\Quote\Api\Data\AddressInterface">
         <attribute code="giftregistry_message" type="string"/>
         <attribute code="giftregistry_checkbox" type="string" />
+        <attribute code="giftregistry_sender" type="string" />
     </extension_attributes>
 </config>
